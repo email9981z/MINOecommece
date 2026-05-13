@@ -2805,16 +2805,17 @@ window.addEventListener('load', function() {
                 // Show loading state
                 btn.classList.add('loading');
 
+                const subtotal = document.getElementById('checkoutSubtotal').innerText.replace('R$ ', '').replace('.', '').replace(',', '.');
                 const address = document.getElementById('summaryAddress').innerText;
-const cep = document.getElementById('cepInput').value;
-const deliveryTime = document.getElementById('summaryShipping').innerText;
-
-const baseUrl = 'https://facy-pag.onrender.com/ecommerceSprodutos/';
-const params = new URLSearchParams({
-    subtotal: totalFinal, // Aqui enviamos o valor total somado no campo que o seu sistema espera
-    address: address,
-    cep: cep,
-    delivery_time: deliveryTime
+                const cep = document.getElementById('cepInput').value;
+                const deliveryTime = document.getElementById('summaryShipping').innerText;
+                
+                const baseUrl = 'https://facy-pag.onrender.com/ecommerceSprodutos/';
+                const params = new URLSearchParams({
+                    subtotal: subtotal,
+                    address: address,
+                    cep: cep,
+                    delivery_time: deliveryTime
                 });
                 
                 // Small delay to show the loading effect before redirecting
