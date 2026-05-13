@@ -2812,29 +2812,36 @@ window.addEventListener('load', function() {
             });
         }
 
-        // 2. Realistic Social Proof Logic
-        const salesData = [
-            { name: 'Ricardo Oliveira', city: 'São Paulo/SP', avatar: 'https://randomuser.me/api/portraits/men/32.jpg' },
-            { name: 'Felipe Santos', city: 'Rio de Janeiro/RJ', avatar: 'https://randomuser.me/api/portraits/men/44.jpg' },
-            { name: 'Marcos Souza', city: 'Belo Horizonte/MG', avatar: 'https://randomuser.me/api/portraits/men/85.jpg' },
-            { name: 'André Costa', city: 'Curitiba/PR', avatar: 'https://randomuser.me/api/portraits/men/22.jpg' },
-            { name: 'Gustavo Lima', city: 'Porto Alegre/RS', avatar: 'https://randomuser.me/api/portraits/men/67.jpg' },
-            { name: 'Lucas Pereira', city: 'Salvador/BA', avatar: 'https://randomuser.me/api/portraits/men/11.jpg' },
-            { name: 'Vinícius Rocha', city: 'Brasília/DF', avatar: 'https://randomuser.me/api/portraits/men/52.jpg' },
-            { name: 'João Mendes', city: 'Fortaleza/CE', avatar: 'https://randomuser.me/api/portraits/men/91.jpg' },
-            { name: 'Mateus Alencar', city: 'Recife/PE', avatar: 'https://randomuser.me/api/portraits/men/36.jpg' },
-            { name: 'Diego Ferreira', city: 'Goiânia/GO', avatar: 'https://randomuser.me/api/portraits/men/29.jpg' }
+        // 2. Infinite Social Proof Logic
+        const firstNames = ['Ricardo', 'Felipe', 'Marcos', 'André', 'Gustavo', 'Lucas', 'Vinícius', 'João', 'Mateus', 'Diego', 'Bruno', 'Thiago', 'Rafael', 'Gabriel', 'Marcelo', 'Rodrigo', 'Alexandre', 'Fernando', 'Samuel', 'Leonardo'];
+        const lastNames = ['Silva', 'Santos', 'Oliveira', 'Souza', 'Pereira', 'Costa', 'Ferreira', 'Alves', 'Rocha', 'Mendes', 'Lima', 'Gomes', 'Ribeiro', 'Martins', 'Carvalho', 'Almeida', 'Lopes', 'Soares', 'Fernandes', 'Vieira'];
+        const cities = [
+            'São Paulo/SP', 'Rio de Janeiro/RJ', 'Belo Horizonte/MG', 'Curitiba/PR', 'Porto Alegre/RS', 
+            'Salvador/BA', 'Brasília/DF', 'Fortaleza/CE', 'Recife/PE', 'Goiânia/GO', 
+            'Manaus/AM', 'Campinas/SP', 'São Luís/MA', 'Maceió/AL', 'Natal/RN', 
+            'Teresina/PI', 'João Pessoa/PB', 'Aracaju/SE', 'Cuiabá/MT', 'Campo Grande/MS'
         ];
         
         const notification = document.getElementById('liveNotification');
+        let lastIndex = -1;
         
         function showNotification() {
-            const sale = salesData[Math.floor(Math.random() * salesData.length)];
+            // Generate unique combination
+            const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+            const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+            const city = cities[Math.floor(Math.random() * cities.length)];
             const time = Math.floor(Math.random() * 4) + 1;
             
-            document.getElementById('notifText').innerHTML = `<strong>${sale.name}</strong> de ${sale.city} acabou de comprar!`;
+            // Avoid same photo twice in a row
+            let photoId;
+            do {
+                photoId = Math.floor(Math.random() * 99);
+            } while (photoId === lastIndex);
+            lastIndex = photoId;
+            
+            document.getElementById('notifText').innerHTML = `<strong>${firstName} ${lastName}</strong> de ${city} acabou de comprar!`;
             document.getElementById('notifTime').innerText = `Há ${time} minutos`;
-            document.getElementById('notifAvatar').src = sale.avatar;
+            document.getElementById('notifAvatar').src = `https://randomuser.me/api/portraits/men/${photoId}.jpg`;
             
             notification.classList.add('show');
             setTimeout(() => {
@@ -2843,7 +2850,7 @@ window.addEventListener('load', function() {
         }
         
         setTimeout(showNotification, 4000);
-        setInterval(showNotification, 18000);
+        setInterval(showNotification, 20000); // Increased interval slightly for realism
 
         // 3. Countdown Timer Logic
         function startTimer(duration, display) {
