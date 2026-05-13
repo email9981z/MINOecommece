@@ -2917,6 +2917,275 @@ window.addEventListener('load', function() {
         if (timerDisplay) startTimer(845, timerDisplay);
     })();
     </script>
+
+        <!-- 
+  NOTIFICAÇÕES DE PROVA SOCIAL - VERSÃO OTIMIZADA (UX/UI)
+  Instruções: Substitua o bloco antigo por este no final do arquivo, antes do </body>.
+-->
+<script>
+(function() {
+    // --- CONFIGURAÇÕES OTIMIZADAS ---
+    const config = {
+        intervaloMin: 20000, // Aumentado para 20s para ser menos intrusivo
+        intervaloMax: 45000, // Até 45s entre notificações
+        tempoExibicao: 5000,  // Reduzido para 5s (suficiente para leitura rápida)
+        primeiroAtraso: 8000, // 8s após carregar (deixa o usuário ver o site primeiro)
+        probabilidades: {
+            compra: 0.7,
+            carrinho: 0.2,
+            visualizando: 0.1
+        }
+    };
+
+    const dados = {
+        nomes: ['Ricardo', 'Felipe', 'Marcos', 'André', 'Gustavo', 'Lucas', 'Vinícius', 'João', 'Mateus', 'Diego', 'Bruno', 'Thiago', 'Rafael', 'Gabriel', 'Marcelo', 'Rodrigo', 'Alexandre', 'Fernando', 'Samuel', 'Leonardo', 'Carlos', 'Eduardo', 'Henrique', 'Murilo', 'Vitor', 'Adriano', 'Douglas', 'Leandro', 'Tiago', 'Ruan'],
+        sobrenomes: ['Silva', 'Santos', 'Oliveira', 'Souza', 'Pereira', 'Costa', 'Ferreira', 'Alves', 'Rocha', 'Mendes', 'Lima', 'Gomes', 'Ribeiro', 'Martins', 'Carvalho', 'Almeida', 'Lopes', 'Soares', 'Fernandes', 'Vieira', 'Barbosa', 'Machado', 'Teixeira', 'Cavalcanti', 'Dias', 'Moreira', 'Nunes', 'Batista'],
+        cidades: [
+            'São Paulo/SP', 'Rio de Janeiro/RJ', 'Belo Horizonte/MG', 'Curitiba/PR', 'Porto Alegre/RS', 
+            'Salvador/BA', 'Brasília/DF', 'Fortaleza/CE', 'Recife/PE', 'Goiânia/GO', 
+            'Manaus/AM', 'Campinas/SP', 'São Luís/MA', 'Maceió/AL', 'Natal/RN', 
+            'Teresina/PI', 'João Pessoa/PB', 'Aracaju/SE', 'Cuiabá/MT', 'Campo Grande/MS'
+        ],
+        produtos: [
+            'Kit 3 Frascos (Tratamento Trimestral)',
+            'Kit 6 Frascos (Tratamento Semestral)',
+            '1 Frasco (Tratamento Mensal)',
+            'Kit 12 Frascos (Tratamento Anual)'
+        ]
+    };
+
+    // --- ESTILOS REVISADOS ---
+    const style = document.createElement('style');
+    style.innerHTML = `
+        #notif-premium-container {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            background: #ffffff;
+            padding: 10px 14px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 99999;
+            transform: translateY(100px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(0,0,0,0.05);
+            max-width: 320px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            pointer-events: auto;
+        }
+
+        #notif-premium-container.show {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .notif-premium-avatar-wrapper {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .notif-premium-avatar-wrapper img {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            display: block;
+            background: #f0f0f0;
+        }
+
+        .notif-premium-status-dot {
+            position: absolute;
+            bottom: 1px;
+            right: 1px;
+            width: 10px;
+            height: 10px;
+            background: #10b981;
+            border: 2px solid #fff;
+            border-radius: 50%;
+        }
+
+        .notif-premium-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .notif-premium-text {
+            font-size: 12.5px;
+            color: #475569;
+            line-height: 1.4;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .notif-premium-text strong {
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        .notif-premium-meta {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 2px;
+        }
+
+        .notif-premium-time {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        .notif-premium-badge {
+            font-size: 10px;
+            color: #10b981;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .notif-premium-close {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            color: #64748b;
+            cursor: pointer;
+            font-size: 14px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        #notif-premium-container:hover .notif-premium-close {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            #notif-premium-container {
+                bottom: 20px;
+                left: 10px;
+                right: 10px;
+                max-width: none;
+                margin: 0 auto;
+                width: calc(100% - 20px);
+            }
+            .notif-premium-close {
+                opacity: 1; /* Sempre visível no mobile */
+                top: 4px;
+                right: 4px;
+                border: none;
+                box-shadow: none;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // --- ESTRUTURA ---
+    const container = document.createElement('div');
+    container.id = 'notif-premium-container';
+    document.body.appendChild(container);
+
+    let isPaused = false;
+
+    // --- LÓGICA ---
+    function getRandom(array) {
+        return array[Math.floor(Math.random() * array.length)];
+    }
+
+    function formatTime(seconds) {
+        if (seconds < 60) return `agora`;
+        const mins = Math.floor(seconds / 60);
+        return `há ${mins}m`;
+    }
+
+    function hideNotification() {
+        container.classList.remove('show');
+    }
+
+    function showNotification() {
+        if (isPaused || sessionStorage.getItem('notif_closed')) return;
+
+        const rand = Math.random();
+        let type = 'compra';
+        if (rand > 0.7 && rand <= 0.9) type = 'carrinho';
+        else if (rand > 0.9) type = 'visualizando';
+
+        const nome = getRandom(dados.nomes);
+        const sobrenome = getRandom(dados.sobrenomes);
+        const cidade = getRandom(dados.cidades);
+        const produto = getRandom(dados.produtos);
+        const photoId = Math.floor(Math.random() * 70);
+        const tempoSegundos = Math.floor(Math.random() * 120);
+
+        let badgeText = 'Verificado';
+        let contentHtml = '';
+
+        if (type === 'compra') {
+            contentHtml = `<strong>${nome} ${sobrenome.charAt(0)}.</strong> de ${cidade.split('/')[0]} <br>comprou ${produto}`;
+            badgeText = 'Compra confirmada';
+        } else if (type === 'carrinho') {
+            contentHtml = `<strong>${nome}</strong> de ${cidade.split('/')[0]} <br>adicionou ao carrinho`;
+            badgeText = 'Interesse real';
+        } else {
+            const viewers = Math.floor(Math.random() * 15) + 5;
+            contentHtml = `<strong>${viewers} pessoas</strong> estão <br>vendo este produto agora`;
+            badgeText = 'Ao vivo';
+        }
+
+        container.innerHTML = `
+            <button class="notif-premium-close" aria-label="Fechar">&times;</button>
+            <div class="notif-premium-avatar-wrapper">
+                <img src="https://i.pravatar.cc/100?u=${photoId}" alt="">
+                <div class="notif-premium-status-dot"></div>
+            </div>
+            <div class="notif-premium-content">
+                <p class="notif-premium-text">${contentHtml}</p>
+                <div class="notif-premium-meta">
+                    <span class="notif-premium-badge">
+                        <svg width="10" height="10" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+                        ${badgeText}
+                    </span>
+                    <span class="notif-premium-time">• ${formatTime(tempoSegundos)}</span>
+                </div>
+            </div>
+        `;
+
+        // Evento de fechar
+        container.querySelector('.notif-premium-close').onclick = (e) => {
+            e.stopPropagation();
+            hideNotification();
+            sessionStorage.setItem('notif_closed', 'true');
+        };
+
+        container.classList.add('show');
+
+        setTimeout(hideNotification, config.tempoExibicao);
+
+        // Agendar próxima
+        const proximoIntervalo = Math.floor(Math.random() * (config.intervaloMax - config.intervaloMin)) + config.intervaloMin;
+        setTimeout(showNotification, proximoIntervalo);
+    }
+
+    // Iniciar após o delay inicial
+    setTimeout(showNotification, config.primeiroAtraso);
+})();
+</script>
+
     
 </body>
 </html>
