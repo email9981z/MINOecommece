@@ -2920,7 +2920,7 @@ window.addEventListener('load', function() {
         const timerDisplay = document.querySelector('.scarcity-timer');
 if (timerDisplay) {
     // 21 minutos e 48 segundos convertidos para segundos
-    const duration = (21 * 60) + 19; 
+    const duration = (21 * 60) + 09; 
     startTimer(duration, timerDisplay);
 }
     })();
@@ -3182,7 +3182,7 @@ if (timerDisplay) {
 
         if (type === 'compra') {
             contentHtml = `<strong>${nome} ${sobrenome.charAt(0)}.</strong> de ${cidade.split('/')[0]} <br>comprou agora ${produto}`;
-            badgeText = 'Compra confirmada';
+            badgeText = 'Verificado';
         } else if (type === 'carrinho') {
             contentHtml = `<strong>${nome}</strong> de ${cidade.split('/')[0]} <br>adicionou ao carrinho`;
             badgeText = 'Interesse';
