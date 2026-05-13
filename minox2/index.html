@@ -99,95 +99,44 @@
     position: relative;
 }
 
-/* Estilos Aprimorados mantendo as dimensões originais */
-    .live-notification {
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        background: #ffffff;
-        padding: 10px 15px;
-        border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.12);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        z-index: 9999;
-        transform: translateX(-150%);
-        transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        border: 1px solid #f1f5f9;
-        max-width: 280px; /* Dimensão original mantida */
-        font-family: 'Plus Jakarta Sans', sans-serif;
-    }
+/* Notificação de Vendas */
+.live-notification {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: #fff;
+    padding: 10px 15px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 9999;
+    transform: translateX(-150%);
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid #f1f5f9;
+    max-width: 280px;
+}
 
-    .live-notification.show { 
-        transform: translateX(0); 
-    }
+.live-notification.show { transform: translateX(0); }
+.live-notification img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #000066; }
 
-    .live-notification img { 
-        width: 45px; /* Dimensão original mantida */
-        height: 45px; 
-        border-radius: 50%; 
-        object-fit: cover; 
-        border: 2px solid #eef2ff; /* Azul mais suave para o design */
-        flex-shrink: 0;
-    }
+/* Contador de Visualizações */
+.viewing-count {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: #f8fafc;
+    border-radius: 6px;
+    width: fit-content;
+}
 
-    .notif-content {
-        flex: 1;
-    }
-
-    .notif-content p { 
-        font-size: 12.5px; 
-        margin: 0; 
-        color: #1e293b; 
-        line-height: 1.4; 
-        padding-right: 15px; 
-    }
-
-    .notif-content p strong {
-        color: #0f172a;
-        font-weight: 700;
-    }
-
-    .notif-content span { 
-        font-size: 10.5px; 
-        color: #94a3b8; 
-        font-weight: 500; 
-        display: block;
-        margin-top: 2px;
-    }
-
-    .close-notif {
-        position: absolute;
-        top: 6px;
-        right: 8px;
-        background: #f8fafc;
-        border: none;
-        color: #94a3b8;
-        font-size: 16px;
-        cursor: pointer;
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s;
-        line-height: 1;
-    }
-
-    .close-notif:hover { 
-        background: #f1f5f9; 
-        color: #64748b; 
-    }
-
-    @media (max-width: 768px) {
-        .live-notification {
-            bottom: 85px; /* Ajuste para mobile para não sobrepor o Sticky CTA */
-            left: 15px;
-            max-width: calc(100% - 30px);
-        }
-    }
+.viewing-count i { color: #ef4444; animation: blink 1.5s infinite; }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
 /* Melhoria no Botão de Compra */
 .btn-buy {
@@ -2856,15 +2805,15 @@ window.addEventListener('load', function() {
     </script>
     
 
-    <!-- Estrutura HTML Original -->
-<div class="live-notification" id="liveNotification">
-    <button class="close-notif" id="closeNotif" aria-label="Fechar">&times;</button>
-    <img src="https://i.pravatar.cc/100?u=1" id="notifAvatar" alt="User">
-    <div class="notif-content">
-        <p id="notifText"><strong>João Silva</strong> de São Paulo/SP acabou de comprar!</p>
-        <span id="notifTime">Há 2 minutos</span>
+    <!-- Live Sales Notification -->
+    <div class="live-notification" id="liveNotification">
+        <button class="close-notif" id="closeNotif" aria-label="Fechar">&times;</button>
+        <img src="https://i.pravatar.cc/100?u=1" id="notifAvatar" alt="User">
+        <div class="notif-content">
+            <p id="notifText"><strong>João Silva</strong> de São Paulo/SP acabou de comprar!</p>
+            <span id="notifTime">Há 2 minutos</span>
+        </div>
     </div>
-</div>
 
     <!-- Sticky CTA Mobile -->
     <div class="sticky-cta-mobile" id="stickyCtaMobile">
@@ -2878,54 +2827,6 @@ window.addEventListener('load', function() {
             </button>
         </div>
     </div>
-
-      <script>
-(function() {
-    // Lógica Original Mantida
-    const firstNames = ['Ricardo', 'Felipe', 'Marcos', 'André', 'Gustavo', 'Lucas', 'Vinícius', 'João', 'Mateus', 'Diego', 'Bruno', 'Thiago', 'Rafael', 'Gabriel', 'Marcelo', 'Rodrigo', 'Alexandre', 'Fernando', 'Samuel', 'Leonardo'];
-    const lastNames = ['Silva', 'Santos', 'Oliveira', 'Souza', 'Pereira', 'Costa', 'Ferreira', 'Alves', 'Rocha', 'Mendes', 'Lima', 'Gomes', 'Ribeiro', 'Martins', 'Carvalho', 'Almeida', 'Lopes', 'Soares', 'Fernandes', 'Vieira'];
-    const cities = [
-        'São Paulo/SP', 'Rio de Janeiro/RJ', 'Belo Horizonte/MG', 'Curitiba/PR', 'Porto Alegre/RS', 
-        'Salvador/BA', 'Brasília/DF', 'Fortaleza/CE', 'Recife/PE', 'Goiânia/GO', 
-        'Manaus/AM', 'Campinas/SP', 'São Luís/MA', 'Maceió/AL', 'Natal/RN', 
-        'Teresina/PI', 'João Pessoa/PB', 'Aracaju/SE', 'Cuiabá/MT', 'Campo Grande/MS'
-    ];
-    
-    const notification = document.getElementById('liveNotification');
-    const closeBtn = document.getElementById('closeNotif');
-    let lastIndex = -1;
-    
-    closeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        notification.classList.remove('show');
-    });
-
-    function showNotification() {
-        const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
-        const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-        const city = cities[Math.floor(Math.random() * cities.length)];
-        const time = Math.floor(Math.random() * 4) + 1;
-        
-        let photoId;
-        do {
-            photoId = Math.floor(Math.random() * 99);
-        } while (photoId === lastIndex);
-        lastIndex = photoId;
-        
-        document.getElementById('notifText').innerHTML = `<strong>${firstName} ${lastName}</strong> de ${city} acabou de comprar!`;
-        document.getElementById('notifTime').innerText = `Há ${time} minutos`;
-        document.getElementById('notifAvatar').src = `https://i.pravatar.cc/100?u=${photoId}`;
-        
-        notification.classList.add('show');
-        setTimeout(() => {
-            notification.classList.remove('show');
-        }, 6000); // Tempo de exibição original
-    }
-    
-    setTimeout(showNotification, 4000); // Delay inicial original
-    setInterval(showNotification, 20000); // Intervalo original
-})();
-</script>
 
     <script>
     (function() {
@@ -2953,6 +2854,68 @@ window.addEventListener('load', function() {
                 mainBuyBtn.click();
             });
         }
+
+        // 2. Infinite Social Proof Logic with Continuous Flow
+        const firstNames = ['Ricardo', 'Felipe', 'Marcos', 'André', 'Gustavo', 'Lucas', 'Vinícius', 'João', 'Mateus', 'Diego', 'Bruno', 'Thiago', 'Rafael', 'Gabriel', 'Marcelo', 'Rodrigo', 'Alexandre', 'Fernando', 'Samuel', 'Leonardo'];
+        const lastNames = ['Silva', 'Santos', 'Oliveira', 'Souza', 'Pereira', 'Costa', 'Ferreira', 'Alves', 'Rocha', 'Mendes', 'Lima', 'Gomes', 'Ribeiro', 'Martins', 'Carvalho', 'Almeida', 'Lopes', 'Soares', 'Fernandes', 'Vieira'];
+        const cities = [
+            'São Paulo/SP', 'Rio de Janeiro/RJ', 'Belo Horizonte/MG', 'Curitiba/PR', 'Porto Alegre/RS', 
+            'Salvador/BA', 'Brasília/DF', 'Fortaleza/CE', 'Recife/PE', 'Goiânia/GO', 
+            'Manaus/AM', 'Campinas/SP', 'São Luís/MA', 'Maceió/AL', 'Natal/RN', 
+            'Teresina/PI', 'João Pessoa/PB', 'Aracaju/SE', 'Cuiabá/MT', 'Campo Grande/MS'
+        ];
+        
+        const notification = document.getElementById('liveNotification');
+        const closeBtn = document.getElementById('closeNotif');
+        let lastIndex = -1;
+        
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            notification.classList.remove('show');
+            // No long pause, just close this specific one. 
+            // The next one will show on the next interval.
+        });
+
+        function showNotification() {
+            const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+            const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+            const city = cities[Math.floor(Math.random() * cities.length)];
+            const time = Math.floor(Math.random() * 4) + 1;
+            
+            let photoId;
+            do {
+                photoId = Math.floor(Math.random() * 99);
+            } while (photoId === lastIndex);
+            lastIndex = photoId;
+            
+            document.getElementById('notifText').innerHTML = `<strong>${firstName} ${lastName}</strong> de ${city} acabou de comprar!`;
+            document.getElementById('notifTime').innerText = `Há ${time} minutos`;
+            document.getElementById('notifAvatar').src = `https://randomuser.me/api/portraits/men/${photoId}.jpg`;
+            
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 6000);
+        }
+        
+        setTimeout(showNotification, 4000);
+        setInterval(showNotification, 20000);
+
+        // 3. Countdown Timer Logic
+        function startTimer(duration, display) {
+            let timer = duration, minutes, seconds;
+            setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+                display.textContent = minutes + ":" + seconds;
+                if (--timer < 0) timer = duration;
+            }, 1000);
+        }
+        const timerDisplay = document.querySelector('.scarcity-timer');
+        if (timerDisplay) startTimer(845, timerDisplay);
+    })();
     </script>
     
 </body>
