@@ -2855,67 +2855,6 @@ window.addEventListener('load', function() {
             });
         }
 
-        // 2. Infinite Social Proof Logic with Continuous Flow
-        const firstNames = ['Ricardo', 'Felipe', 'Marcos', 'André', 'Gustavo', 'Lucas', 'Vinícius', 'João', 'Mateus', 'Diego', 'Bruno', 'Thiago', 'Rafael', 'Gabriel', 'Marcelo', 'Rodrigo', 'Alexandre', 'Fernando', 'Samuel', 'Leonardo'];
-        const lastNames = ['Silva', 'Santos', 'Oliveira', 'Souza', 'Pereira', 'Costa', 'Ferreira', 'Alves', 'Rocha', 'Mendes', 'Lima', 'Gomes', 'Ribeiro', 'Martins', 'Carvalho', 'Almeida', 'Lopes', 'Soares', 'Fernandes', 'Vieira'];
-        const cities = [
-            'São Paulo/SP', 'Rio de Janeiro/RJ', 'Belo Horizonte/MG', 'Curitiba/PR', 'Porto Alegre/RS', 
-            'Salvador/BA', 'Brasília/DF', 'Fortaleza/CE', 'Recife/PE', 'Goiânia/GO', 
-            'Manaus/AM', 'Campinas/SP', 'São Luís/MA', 'Maceió/AL', 'Natal/RN', 
-            'Teresina/PI', 'João Pessoa/PB', 'Aracaju/SE', 'Cuiabá/MT', 'Campo Grande/MS'
-        ];
-        
-        const notification = document.getElementById('liveNotification');
-        const closeBtn = document.getElementById('closeNotif');
-        let lastIndex = -1;
-        
-        closeBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            notification.classList.remove('show');
-            // No long pause, just close this specific one. 
-            // The next one will show on the next interval.
-        });
-
-        function showNotification() {
-            const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
-            const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-            const city = cities[Math.floor(Math.random() * cities.length)];
-            const time = Math.floor(Math.random() * 4) + 1;
-            
-            let photoId;
-            do {
-                photoId = Math.floor(Math.random() * 99);
-            } while (photoId === lastIndex);
-            lastIndex = photoId;
-            
-            document.getElementById('notifText').innerHTML = `<strong>${firstName} ${lastName}</strong> de ${city} acabou de comprar!`;
-            document.getElementById('notifTime').innerText = `Há ${time} minutos`;
-            document.getElementById('notifAvatar').src = `https://randomuser.me/api/portraits/men/${photoId}.jpg`;
-            
-            notification.classList.add('show');
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 6000);
-        }
-        
-        setTimeout(showNotification, 4000);
-        setInterval(showNotification, 20000);
-
-        // 3. Countdown Timer Logic
-        function startTimer(duration, display) {
-            let timer = duration, minutes, seconds;
-            setInterval(function () {
-                minutes = parseInt(timer / 60, 10);
-                seconds = parseInt(timer % 60, 10);
-                minutes = minutes < 10 ? "0" + minutes : minutes;
-                seconds = seconds < 10 ? "0" + seconds : seconds;
-                display.textContent = minutes + ":" + seconds;
-                if (--timer < 0) timer = duration;
-            }, 1000);
-        }
-        const timerDisplay = document.querySelector('.scarcity-timer');
-        if (timerDisplay) startTimer(845, timerDisplay);
-    })();
     </script>
 
    <!-- 
@@ -2926,8 +2865,8 @@ window.addEventListener('load', function() {
 (function() {
     // --- CONFIGURAÇÕES OTIMIZADAS ---
     const config = {
-        intervaloMin: 20000, // Aumentado para 20s para ser menos intrusivo
-        intervaloMax: 45000, // Até 45s entre notificações
+        intervaloMin: 10000, // Aumentado para 20s para ser menos intrusivo
+        intervaloMax: 35000, // Até 45s entre notificações
         tempoExibicao: 5000,  // Reduzido para 5s (suficiente para leitura rápida)
         primeiroAtraso: 8000, // 8s após carregar (deixa o usuário ver o site primeiro)
         probabilidades: {
@@ -2949,7 +2888,6 @@ window.addEventListener('load', function() {
         produtos: [
             'Kit 3 Frascos (Tratamento Trimestral)',
             'Kit 6 Frascos (Tratamento Semestral)',
-            '1 Frasco (Tratamento Mensal)',
             'Kit 12 Frascos (Tratamento Anual)'
         ]
     };
