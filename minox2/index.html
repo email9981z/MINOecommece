@@ -2876,13 +2876,17 @@ window.addEventListener('load', function() {
   NOTIFICAÇÕES DE PROVA SOCIAL - VERSÃO OTIMIZADA (UX/UI)
   Instruções: Substitua o bloco antigo por este no final do arquivo, antes do </body>.
 -->
+<!-- 
+  NOTIFICAÇÕES DE PROVA SOCIAL - VERSÃO OTIMIZADA (UX/UI)
+  Instruções: Substitua o bloco antigo por este no final do arquivo, antes do </body>.
+-->
 <script>
 (function() {
     // --- CONFIGURAÇÕES OTIMIZADAS ---
     const config = {
-        intervaloMin: 5000, // Aumentado para 20s para ser menos intrusivo
-        intervaloMax: 10000, // Até 45s entre notificações
-        tempoExibicao: 3000,  // Reduzido para 5s (suficiente para leitura rápida)
+        intervaloMin: 10000, // Aumentado para 20s para ser menos intrusivo
+        intervaloMax: 23000, // Até 45s entre notificações
+        tempoExibicao: 5000,  // Reduzido para 5s (suficiente para leitura rápida)
         primeiroAtraso: 8000, // 8s após carregar (deixa o usuário ver o site primeiro)
         probabilidades: {
             compra: 0.7,
@@ -2901,10 +2905,29 @@ window.addEventListener('load', function() {
             'Teresina/PI', 'João Pessoa/PB', 'Aracaju/SE', 'Cuiabá/MT', 'Campo Grande/MS'
         ],
         produtos: [
-            'Kit 3 Frascos (Tratamento Trimestral)',
-            'Kit 6 Frascos (Tratamento Semestral)',
-            '1 Frasco (Tratamento Mensal)',
-            'Kit 12 Frascos (Tratamento Anual)'
+            'Kit 3 Frascos - Promoção',
+        ],
+        fotos: [
+            'https://randomuser.me/api/portraits/men/1.jpg',
+            'https://randomuser.me/api/portraits/men/3.jpg',
+            'https://randomuser.me/api/portraits/men/5.jpg',
+            'https://randomuser.me/api/portraits/men/8.jpg',
+            'https://randomuser.me/api/portraits/men/11.jpg',
+            'https://randomuser.me/api/portraits/men/15.jpg',
+            'https://randomuser.me/api/portraits/men/22.jpg',
+            'https://randomuser.me/api/portraits/men/32.jpg',
+            'https://randomuser.me/api/portraits/men/36.jpg',
+            'https://randomuser.me/api/portraits/men/44.jpg',
+            'https://randomuser.me/api/portraits/men/46.jpg',
+            'https://randomuser.me/api/portraits/men/51.jpg',
+            'https://randomuser.me/api/portraits/men/52.jpg',
+            'https://randomuser.me/api/portraits/men/58.jpg',
+            'https://randomuser.me/api/portraits/men/62.jpg',
+            'https://randomuser.me/api/portraits/men/64.jpg',
+            'https://randomuser.me/api/portraits/men/75.jpg',
+            'https://randomuser.me/api/portraits/men/81.jpg',
+            'https://randomuser.me/api/portraits/men/86.jpg',
+            'https://randomuser.me/api/portraits/men/91.jpg'
         ]
     };
 
@@ -3098,28 +3121,24 @@ window.addEventListener('load', function() {
         const sobrenome = getRandom(dados.sobrenomes);
         const cidade = getRandom(dados.cidades);
         const produto = getRandom(dados.produtos);
-        const photoId = Math.floor(Math.random() * 70);
+        const fotoUrl = getRandom(dados.fotos);
         const tempoSegundos = Math.floor(Math.random() * 120);
 
         let badgeText = 'Verificado';
         let contentHtml = '';
 
         if (type === 'compra') {
-            contentHtml = `<strong>${nome} ${sobrenome.charAt(0)}.</strong> de ${cidade.split('/')[0]} <br>comprou ${produto}`;
+            contentHtml = `<strong>${nome} ${sobrenome.charAt(0)}.</strong> de ${cidade.split('/')[0]} <br>comprou agora ${produto}`;
             badgeText = 'Compra confirmada';
         } else if (type === 'carrinho') {
             contentHtml = `<strong>${nome}</strong> de ${cidade.split('/')[0]} <br>adicionou ao carrinho`;
-            badgeText = 'Interesse real';
-        } else {
-            const viewers = Math.floor(Math.random() * 15) + 5;
-            contentHtml = `<strong>${viewers} pessoas</strong> estão <br>vendo este produto agora`;
-            badgeText = 'Ao vivo';
+            badgeText = 'Interesse';
         }
 
         container.innerHTML = `
             <button class="notif-premium-close" aria-label="Fechar">&times;</button>
             <div class="notif-premium-avatar-wrapper">
-                <img src="https://i.pravatar.cc/100?u=${photoId}" alt="">
+                <img src="${fotoUrl}" alt="">
                 <div class="notif-premium-status-dot"></div>
             </div>
             <div class="notif-premium-content">
@@ -3154,6 +3173,7 @@ window.addEventListener('load', function() {
     setTimeout(showNotification, config.primeiroAtraso);
 })();
 </script>
+
 
     
 </body>
