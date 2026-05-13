@@ -1,0 +1,1343 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<script>
+(function() {
+    // Configuração: 20 minutos em milissegundos
+    const VINTE_MINUTOS = 20 * 60 * 1000; 
+    const agora = new Date().getTime();
+    
+    let primeiroAcesso = localStorage.getItem('site_primeiro_acesso');
+
+    if (!primeiroAcesso) {
+        localStorage.setItem('site_primeiro_acesso', agora);
+    } else {
+        const tempoDecorrido = agora - parseInt(primeiroAcesso);
+
+        if (tempoDecorrido > VINTE_MINUTOS) {
+            // Remove todo o conteúdo do HTML e deixa a tela branca
+            document.documentElement.innerHTML = "";
+            
+            // Força o fundo a ficar branco (caso o CSS do site tenha cores)
+            document.documentElement.style.backgroundColor = "#ffffff";
+            
+            // Interrompe qualquer outro carregamento
+            window.stop(); 
+        }
+    }
+})();
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Loja Online</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+
+        /* --- NOVOS ESTILOS DE ESCASSEZ --- */
+:root {
+    --scarcity-red: #dc2626;
+    --scarcity-bg: #fef2f2;
+}
+
+/* Banner de Oferta Relâmpago */
+.scarcity-banner {
+    background: var(--scarcity-bg);
+    border: 1px dashed var(--scarcity-red);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: pulse-border 2s infinite;
+}
+
+@keyframes pulse-border {
+    0% { border-color: var(--scarcity-red); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.2); }
+    50% { border-color: transparent; box-shadow: 0 0 0 4px rgba(220, 38, 38, 0); }
+    100% { border-color: var(--scarcity-red); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.2); }
+}
+
+.scarcity-timer {
+    font-weight: 800;
+    color: var(--scarcity-red);
+    font-variant-numeric: tabular-nums;
+    font-size: 18px;
+}
+
+/* Barra de Estoque */
+.stock-bar-container {
+    margin: 20px 0;
+    background: #fff;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #f1f5f9;
+}
+
+.stock-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.stock-bar {
+    height: 10px;
+    background: #f1f5f9;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.stock-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #dc2626, #ef4444);
+    width: 12%; /* Simulação de estoque baixo */
+    border-radius: 5px;
+    position: relative;
+}
+
+/* Notificação de Vendas */
+.live-notification {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: #fff;
+    padding: 10px 15px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 9999;
+    transform: translateX(-150%);
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid #f1f5f9;
+    max-width: 280px;
+}
+
+.live-notification.show { transform: translateX(0); }
+/* Esconder notificações quando o carrinho estiver aberto */
+body:has(.cart-overlay.active) .live-notification,
+body:has(.cart-overlay.active) #notif-premium-container { 
+    display: none !important; 
+    opacity: 0 !important; 
+    visibility: hidden !important; 
+}
+.live-notification img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #000066; }
+
+/* Contador de Visualizações */
+.viewing-count {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: #f8fafc;
+    border-radius: 6px;
+    width: fit-content;
+}
+
+.viewing-count i { color: #ef4444; animation: blink 1.5s infinite; }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+/* Melhoria no Botão de Compra */
+.btn-buy {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+
+.btn-buy:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 25px rgba(22, 163, 74, 0.5) !important;
+}
+
+/* --- ESTILOS PARA VARIANTES --- */
+.variants-section {
+    margin-bottom: 28px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+
+.variants-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.variants-title i {
+    color: var(--brand-primary);
+    font-size: 16px;
+}
+
+.variants-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+@media (min-width: 768px) {
+    .variants-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.variant-card {
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+.variant-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 0, 102, 0.02) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.variant-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 12px rgba(0, 0, 102, 0.08);
+    transform: translateY(-2px);
+}
+
+.variant-card.active {
+    border-color: var(--brand-primary);
+    background: #f0f4ff;
+    box-shadow: 0 8px 24px rgba(0, 0, 102, 0.15);
+}
+
+.variant-card.active::before {
+    opacity: 1;
+}
+
+.variant-radio {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.variant-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    position: relative;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.variant-checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: #fff;
+    transition: all 0.2s ease;
+    margin-top: 2px;
+}
+
+.variant-card.active .variant-checkbox {
+    border-color: var(--brand-primary);
+    background: var(--brand-primary);
+    color: #fff;
+    font-size: 12px;
+}
+
+.variant-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.variant-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 4px;
+}
+
+.variant-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.variant-price-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.variant-price {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--brand-primary);
+}
+
+.variant-badge {
+    font-size: 10px;
+    font-weight: 800;
+    background: var(--brand-primary);
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.variant-badge.default {
+    background: var(--success);
+}
+
+/* --- FIM ESTILOS VARIANTES --- */
+        
+        :root {
+            --brand-primary: #000066;
+            --brand-accent: #2563eb;
+            --success: #16a34a;
+            --bg-light: #ffffff;
+            --bg-soft: #f9fafb;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --border: #f1f5f9;
+            --radius: 12px;
+            --pix-color: #00bfa5;
+            /* Netshoes Variables */
+            --ns-purple: #30006b;
+            --ns-text: #161718;
+            --ns-gray: #707070;
+            --ns-border: #e0e0e0;
+            --ns-green: #008a17;
+            --ns-bg-green: #e6f7e9;
+            --ns-link: #5c00cc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        html, body {
+            width: 100%;
+            overflow-x: hidden; /* Prevent horizontal scroll on the whole page */
+            position: relative;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            line-height: 1.4;
+        }
+
+        .container {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 0 32px;
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 0 20px; }
+            .main-header { padding: 18px 20px; }
+        }
+
+        
+        /* --- START REFERENCE HEADER STYLES --- */
+        :root {
+            --primary-color: #000066;
+            --secondary-color: #000033;
+            --accent-color: #ffcc00;
+            --text-color: #1a1a1a;
+            --light-gray: #f8f9fa;
+            --border-color: #e5e7eb;
+            --success-color: #16a34a;
+            --pix-color: #00bfa5;
+            --buy-now-bg: #16a34a;
+            --buy-now-hover: #15803d;
+            --cart-bg: #ffffff;
+            --cart-border: #000066;
+            --cart-text: #000066;
+            --cart-hover-bg: #f0f4ff;
+        }
+        
+        /* Top Bar */
+        .top-bar {
+            background-color: var(--light-gray);
+            padding: 8px 0;
+            font-size: 12px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            color: #666;
+        }
+
+        .top-bar strong {
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        /* Header */
+        header {
+            background: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .main-header {
+            padding: 15px 0;
+        }
+
+        .header-flex {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .logo img {
+            height: 45px;
+            width: auto;
+        }
+
+        .search-bar {
+            flex: 1;
+            display: flex;
+            position: relative;
+            max-width: 600px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 12px 45px 12px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            outline: none;
+            font-size: 14px;
+            background: #f9fafb;
+            transition: border-color 0.2s;
+        }
+
+        .search-bar input:focus {
+            border-color: var(--primary-color);
+            background: #fff;
+        }
+
+        .search-bar button {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .icon-link {
+            color: var(--primary-color);
+            font-size: 22px;
+            text-decoration: none;
+            position: relative;
+            transition: opacity 0.2s;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            background-color: var(--pix-color);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 10px;
+            border: 2px solid #fff;
+        }
+
+        /* Navigation */
+        .nav-scroll {
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .nav-scroll::-webkit-scrollbar { display: none; }
+
+        .nav-scroll a {
+            display: inline-block;
+            padding: 0 20px;
+            text-decoration: none;
+            color: #4b5563;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: color 0.2s;
+        }
+
+        .nav-scroll a:hover, .nav-scroll a.active {
+            color: var(--primary-color);
+        }
+
+        /* Breadcrumb */
+        /* --- END REFERENCE HEADER STYLES --- */
+
+        .breadcrumb { padding: 16px 0; font-size: 11px; color: #9ca3af; width: 100%; }
+        .breadcrumb a { text-decoration: none; color: inherit; }
+        .breadcrumb span { margin: 0 6px; }
+
+        /* Product Layout */
+        .product-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 32px;
+            padding-bottom: 48px;
+            width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            .product-grid { grid-template-columns: 1fr 1fr; gap: 60px; padding-top: 24px; }
+        }
+
+        /* Gallery */
+        .gallery-container {
+            position: relative;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden; /* Crucial to prevent horizontal leakage */
+        }
+
+        @media (min-width: 768px) {
+            .gallery-container { position: sticky; top: 140px; height: fit-content; overflow: visible; }
+        }
+
+        .main-image-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--bg-soft);
+            width: 100%;
+        }
+
+        .main-image-slider {
+            display: flex;
+            transition: transform 0.3s ease-in-out;
+            scroll-snap-type: x mandatory;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            width: 100%;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .main-image-slider::-webkit-scrollbar {
+            display: none;
+        }
+
+        .main-image-item {
+            flex: 0 0 100%;
+            width: 100%;
+            scroll-snap-align: start;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            aspect-ratio: 1 / 1;
+        }
+
+        .main-image-item img { 
+            max-width: 100%; 
+            height: auto; 
+            object-fit: contain; 
+            mix-blend-mode: multiply; 
+        }
+
+        /* --- UPDATED THUMBNAILS CSS --- */
+        .thumbnails-outer-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            margin-top: 16px;
+            gap: 8px;
+        }
+
+        .thumbnails-container {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            width: 100%;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            padding: 2px 0;
+        }
+
+        .thumbnails-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .thumb-item {
+            flex: 0 0 calc((100% - 24px) / 4); /* Display exactly 4 thumbnails with 8px gaps */
+            aspect-ratio: 1 / 1;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            background: #fff;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+        }
+
+        .thumb-item.active {
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 0 1px var(--brand-primary);
+        }
+
+        .thumb-item img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            mix-blend-mode: multiply;
+        }
+
+        .thumb-nav-btn {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--brand-primary);
+            font-size: 12px;
+            transition: all 0.2s ease;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .thumb-nav-btn:hover {
+            border-color: var(--brand-primary);
+            background: var(--bg-soft);
+        }
+
+        .thumb-nav-btn.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        /* --- END UPDATED THUMBNAILS CSS --- */
+
+        /* Product Info */
+        .product-content {
+            width: 100%;
+        }
+
+        .product-content h1 {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+            line-height: 1.2;
+            color: var(--text-main);
+        }
+
+        @media (min-width: 768px) { .product-content h1 { font-size: 34px; } }
+
+        .badge-row { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .badge { font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; }
+        .badge-stock { background: #ecfdf5; color: #065f46; }
+        .badge-shipping { background: #eff6ff; color: #1e40af; }
+
+        .rating-row { display: flex; align-items: center; gap: 8px; margin-bottom: 28px; font-size: 13px; color: var(--text-muted); flex-wrap: wrap; }
+        .stars { color: #fbbf24; font-size: 12px; }
+
+        /* Netshoes Pricing Section */
+        .price-box {
+            border-top: 1px solid var(--ns-border);
+            padding-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .old-price-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .old-price {
+            font-size: 14px;
+            color: var(--ns-gray);
+            text-decoration: line-through;
+        }
+
+        .discount-tag {
+            background: var(--ns-bg-green);
+            color: var(--ns-green);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 2px;
+        }
+
+        .main-price {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--ns-text);
+            margin-bottom: 2px;
+        }
+
+        .pix-text {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .installment-text {
+            font-size: 14px;
+            color: var(--ns-gray);
+            margin-bottom: 12px;
+        }
+
+        /* Netshoes Seller & Rating Info */
+        .ns-seller-info {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .ns-seller-info strong {
+            color: var(--brand-primary);
+            font-weight: 600;
+        }
+
+        .ns-rating-container {
+            margin-bottom: 20px;
+            padding: 10px 12px;
+            background: var(--bg-soft);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .ns-rating-bar {
+            width: 100%;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+
+        .ns-rating-fill {
+            width: 98%;
+            height: 100%;
+            background: linear-gradient(90deg, #16a34a, #22c55e);
+        }
+
+        .ns-rating-details {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-main);
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .ns-rating-details i {
+            color: #fbbf24;
+            font-size: 14px;
+        }
+
+        /* Netshoes Shipping Info */
+        .ns-shipping-info {
+            margin-bottom: 24px;
+            padding-top: 16px;
+            border-top: 1px solid var(--ns-border);
+        }
+
+        .ns-shipping-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--ns-green);
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .ns-shipping-desc {
+            font-size: 13px;
+            color: var(--ns-gray);
+            line-height: 1.4;
+        }
+
+        /* Netshoes Buttons */
+        .cta-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 24px;
+            margin-bottom: 24px;
+            width: 100%;
+        }
+
+        .btn-buy {
+            background: var(--success);
+            color: #fff;
+            border: none;
+            padding: 20px;
+            border-radius: var(--radius);
+            font-size: 18px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            width: 100%;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 14px rgba(22, 163, 74, 0.3);
+            text-decoration: none;
+        }
+
+        .btn-buy:hover { 
+            background: #15803d; 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(22, 163, 74, 0.4);
+        }
+
+        .btn-buy:active {
+            transform: translateY(0);
+        }
+
+        .btn-cart {
+            background: #fff;
+            color: var(--brand-primary);
+            border: 2px solid var(--brand-primary);
+            padding: 16px;
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s;
+        }
+
+        .btn-cart:hover {
+            background: var(--bg-soft);
+            border-color: var(--brand-accent);
+            color: var(--brand-accent);
+        }
+
+        /* Option Cards */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .option-card {
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #fff;
+        }
+
+        .option-card:hover { border-color: #cbd5e1; }
+        .option-card.active { border-color: var(--brand-primary); background: #f0f4ff; }
+
+        .option-info .title { display: block; font-weight: 700; font-size: 14px; color: var(--text-main); }
+        .option-info .desc { font-size: 12px; color: var(--text-muted); }
+        .option-price { text-align: right; }
+        .option-price .val { font-weight: 800; color: var(--brand-primary); }
+        .option-price .tag { font-size: 9px; background: var(--brand-primary); color: #fff; padding: 2px 6px; border-radius: 4px; font-weight: 700; }
+
+        /* Description */
+        .description-section { padding: 80px 0; background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%); border-top: 1px solid var(--border); }
+        .description-section h2 { font-size: 32px; font-weight: 800; margin-bottom: 48px; text-align: center; color: var(--text-main); letter-spacing: -0.5px; }
+        .description-grid { display: grid; grid-template-columns: 1fr; gap: 48px; }
+        @media (min-width: 768px) { .description-grid { grid-template-columns: 1.2fr 0.8fr; gap: 60px; } }
+
+        .desc-text-block h3, .desc-tech-block h3 { font-size: 18px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; color: var(--text-main); }
+        .desc-text-block p { color: var(--text-muted); font-size: 15px; line-height: 1.8; margin-bottom: 16px; }
+        .tech-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); border: 1px solid var(--border); }
+        .tech-table td { padding: 16px; border-bottom: 1px solid var(--border); font-size: 14px; }
+        .tech-table td:first-child { font-weight: 700; color: var(--brand-primary); width: 40%; }
+        .tech-table tr:last-child td { border-bottom: none; }
+
+        .trust-benefits {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 20px 0;
+            padding: 16px;
+            background: linear-gradient(135deg, #f0f4ff 0%, #f9fafb 100%);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .benefit-item i {
+            color: var(--brand-primary);
+            font-size: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .trust-benefits {
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <div class="product-grid">
+            <div class="gallery-container">
+                <div class="main-image-wrapper">
+                    <div class="main-image-slider" id="mainImageSlider">
+                        <!-- Images will be injected here by JS -->
+                    </div>
+                </div>
+                
+                <!-- --- UPDATED THUMBNAILS HTML --- -->
+                <div class="thumbnails-outer-container">
+                    <button class="thumb-nav-btn" id="prevThumb" onclick="scrollThumbs(-1)">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div class="thumbnails-container" id="thumbnailsContainer">
+                        <!-- Thumbnails will be injected here by JS -->
+                    </div>
+                    <button class="thumb-nav-btn" id="nextThumb" onclick="scrollThumbs(1)">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <!-- --- END UPDATED THUMBNAILS HTML --- -->
+            </div>
+
+            <div class="product-content">
+                <div class="badge-row">
+                    <span class="badge badge-stock">Em Estoque</span>
+                    <span class="badge badge-shipping">Frete Grátis</span>
+                </div>
+                
+                <h1 id="main-product-title">Carregador Original Apple 20w USB-C Turbo (Iphone 8 ao 17)</h1>
+                
+                <div class="rating-row">
+                    <div class="stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <span>4.9 (13.983 avaliações)</span>
+                </div>
+
+                <!-- Barra de Estoque -->
+
+    <div class="scarcity-banner">
+        <i class="fas fa-clock" style="color: #e53e3e; font-size: 20px;"></i>
+        <div style="flex: 1;">
+            <p style="font-size: 12px; font-weight: 700; color: #1e293b; margin: 0;">PROMOÇÃO TERMINA EM:</p>
+            <div class="scarcity-timer">14:05</div>
+        </div>
+        <div style="text-align: right;">
+            <span style="display: block; font-size: 10px; color: #ef4444; font-weight: 800;">ÚLTIMAS UNIDADES</span>
+        </div>
+    </div>
+    <div class="stock-bar-container">
+    <div class="stock-label">
+        <span style="color: #dc2626;"><i class="fas fa-fire"></i> Restam poucas unidades em promoção</span>
+        <span style="color: #6b7280;">97% vendido</span>
+    </div>
+    <div class="stock-bar">
+        <div class="stock-fill"></div>
+    </div>
+</div>
+
+                <!-- SEÇÃO DE VARIANTES -->
+                <div class="variants-section">
+                    <div class="variants-title">
+                        <i class="fas fa-box"></i> Escolha sua Versão
+                    </div>
+                    <div class="variants-grid" id="variantsContainer">
+                        <!-- Variantes serão injetadas aqui pelo JS -->
+                    </div>
+                </div>
+                <!-- FIM SEÇÃO DE VARIANTES -->
+
+                <div class="price-box">
+                    <div class="old-price-row">
+                        <span class="old-price">R$ <span id="oldPrice">176,20</span></span>
+                        <span class="discount-tag" id="discountTag">38% OFF</span>
+                    </div>
+                    <div class="main-price">
+                        R$ <span id="mainPrice">89,90</span> <span class="pix-text">á Vista</span>
+                    </div>
+                    <div class="installment-text" id="installmentText">
+                        ou R$ 176,20 em até 3x sem juros
+                    </div>
+                </div>
+
+    <div class="trust-benefits">
+        <div class="benefit-item"><i class="fas fa-shield-alt"></i> Original Apple</div>
+        <div class="benefit-item"><i class="fas fa-truck"></i> Envio em 24h</div>
+        <div class="benefit-item"><i class="fas fa-undo"></i> 90 Dias Garantia</div>
+        <div class="benefit-item"><i class="fas fa-check-circle"></i> Certificado</div>
+    </div>
+    
+                <div class="ns-seller-info">
+                    <i class="fas fa-check-circle" style="color: var(--success);"></i>
+                    <span>Vendido e entregue por <strong>Apple Store Brasil</strong></span>
+                </div>
+                <div class="ns-rating-container">
+                    <div class="ns-rating-details">
+                        <i class="fas fa-star"></i>
+                        <span><strong>4.9</strong> (+ 100 mil avaliações)</span>
+                        <span style="margin-left: auto; color: var(--success); font-size: 11px; font-weight: 700;">97% de satisfação</span>
+                    </div>
+                    <div class="ns-rating-bar" style="margin-top: 8px; margin-bottom: 0;">
+                        <div class="ns-rating-fill"></div>
+                    </div>
+                </div>
+
+                <!--INICIO CÓDIGO FRETE OTIMIZADO-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+  function convertDate(e) {
+      var t, o = new Date(e);
+      // Retorna apenas o dia com zero à esquerda se necessário
+      return [(t = o.getDate(), t < 10 ? "0" + t : t)].join("/")
+  }
+
+  function getMesExtenso(e) {
+      var t = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+      return t[e];
+  }
+
+  jQuery(document).ready(function(e) {
+      var hoje = new Date();
+      
+      // n = Segundo dia após hoje (Hoje + 2)
+      var n = new Date();
+      n.setDate(hoje.getDate() + 2);
+      
+      // o = Terceiro dia após hoje (Hoje + 3)
+      var o = new Date();
+      o.setDate(hoje.getDate() + 3);
+
+      // Pegamos o mês da data final (o) para exibir no texto
+      var r = getMesExtenso(o.getMonth());
+      
+      var dataEntrega = "<strong>" + convertDate(n) + "</strong> e <strong>" + convertDate(o) + " de " + r + "</strong>";
+      
+      e.getJSON("https://wtfismyip.com/json", function(t) {
+          var local = (t.YourFuckingLocation || "sua região").replace(", Brazil", "");
+          e(".custom-address").html("Frete Grátis para <span style='color: var(--success); font-weight: 700;'>" + local + " e Região</span>");
+          e(".shipping-estimated").html("Entrega estimada entre " + dataEntrega);
+          e(".shipping-preview-loading").hide();
+          e(".shipping-content").fadeIn().css("display", "flex");
+      });
+  });
+</script>
+<div class="ns-shipping-info" style="background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin: 20px 0; min-height: 70px;">
+    <!-- Loading State -->
+    <p class="shipping-preview-loading" style="font-size: 13px; color: var(--text-muted); margin: 0; display: flex; align-items: center; gap: 10px;">
+        <i class="fas fa-circle-notch fa-spin"></i> Calculando frete para sua região...
+    </p>
+    
+    <!-- Content State (Hidden initially) -->
+    <div class="shipping-content" style="display: none; align-items: flex-start; gap: 12px;">
+        <div style="background: #e6f7e9; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <i class="fas fa-truck" style="color: var(--success); font-size: 16px;"></i>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+            <p class="custom-address" style="font-size: 14px; color: var(--text-main); margin: 0; line-height: 1.2;"></p>
+            <p class="shipping-estimated" style="font-size: 12px; color: var(--text-muted); margin: 0; line-height: 1.2;"></p>
+        </div>
+    </div>
+</div>
+<!--FINAL CÓDIGO FRETE OTIMIZADO-->
+
+
+
+                <div class="cta-group">
+                    <button class="btn-buy" id="buy-now-btn">
+                        <i class="fas fa-bolt"></i>
+                        Comprar Agora
+                    </button>
+                    <button class="btn-cart" id="add-to-cart-btn">
+                        <i class="fas fa-shopping-basket"></i>
+                        Adicionar ao carrinho
+                    </button>
+                </div>
+
+                <div class="viewing-count">
+    <i class="fas fa-eye"></i> <strong>184 pessoas</strong> estão vendo este produto agora
+</div>
+
+                <p style="font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 24px;">
+                    <i class="fas fa-lock" style="margin-right: 4px;"></i> Pagamento 100% Seguro e Criptografado
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // ========== CONFIGURAÇÃO DE DADOS DO PRODUTO ==========
+        const productImages = [
+            'https://via.placeholder.com/500?text=Carregador+Apple+1',
+            'https://via.placeholder.com/500?text=Carregador+Apple+2',
+            'https://via.placeholder.com/500?text=Carregador+Apple+3',
+            'https://via.placeholder.com/500?text=Carregador+Apple+4'
+        ];
+
+        // DADOS DAS VARIANTES - ESTRUTURA PROFISSIONAL
+        const variants = [
+            {
+                id: 'completo',
+                name: 'Completo',
+                description: 'Cabo + Fonte USB-C',
+                price: 89.90,
+                oldPrice: 176.20,
+                discount: 38,
+                badge: 'PADRÃO',
+                badgeClass: 'default',
+                isDefault: true
+            },
+            {
+                id: 'fonte',
+                name: 'Apenas Fonte',
+                description: 'Carregador USB-C 20W',
+                price: 59.90,
+                oldPrice: 119.90,
+                discount: 50,
+                badge: 'ECONÔMICO',
+                badgeClass: '',
+                isDefault: false
+            }
+        ];
+
+        let selectedVariant = variants[0]; // Variante padrão
+        let cart = [];
+
+        // ========== INICIALIZAÇÃO DA PÁGINA ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeGallery();
+            initializeVariants();
+            updatePricing();
+        });
+
+        // ========== GALERIA DE IMAGENS ==========
+        function initializeGallery() {
+            const slider = document.getElementById('mainImageSlider');
+            const thumbnailsContainer = document.getElementById('thumbnailsContainer');
+
+            // Injetar imagens principais
+            slider.innerHTML = productImages.map(img => `
+                <div class="main-image-item">
+                    <img src="${img}" alt="Produto">
+                </div>
+            `).join('');
+
+            // Injetar thumbnails
+            thumbnailsContainer.innerHTML = productImages.map((img, index) => `
+                <div class="thumb-item ${index === 0 ? 'active' : ''}" onclick="selectImage(${index})">
+                    <img src="${img}" alt="Thumbnail ${index + 1}">
+                </div>
+            `).join('');
+        }
+
+        function selectImage(index) {
+            const slider = document.getElementById('mainImageSlider');
+            const items = slider.querySelectorAll('.main-image-item');
+            const thumbs = document.querySelectorAll('.thumb-item');
+
+            items.forEach(item => item.style.transform = `translateX(-${index * 100}%)`);
+            thumbs.forEach((thumb, i) => thumb.classList.toggle('active', i === index));
+        }
+
+        function scrollThumbs(direction) {
+            const container = document.getElementById('thumbnailsContainer');
+            const scrollAmount = 100;
+            container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+        }
+
+        // ========== INICIALIZAÇÃO DE VARIANTES ==========
+        function initializeVariants() {
+            const container = document.getElementById('variantsContainer');
+            
+            container.innerHTML = variants.map((variant, index) => `
+                <label class="variant-card ${variant.isDefault ? 'active' : ''}" onclick="selectVariant('${variant.id}')">
+                    <input type="radio" name="product-variant" class="variant-radio" value="${variant.id}" ${variant.isDefault ? 'checked' : ''}>
+                    
+                    <div class="variant-header">
+                        <div class="variant-checkbox">
+                            ${variant.isDefault ? '<i class="fas fa-check"></i>' : ''}
+                        </div>
+                        <div class="variant-info">
+                            <div class="variant-name">${variant.name}</div>
+                            <div class="variant-desc">${variant.description}</div>
+                        </div>
+                    </div>
+
+                    <div class="variant-price-section">
+                        <div class="variant-price">
+                            R$ ${variant.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                        </div>
+                        <span class="variant-badge ${variant.badgeClass}">
+                            ${variant.badge}
+                        </span>
+                    </div>
+                </label>
+            `).join('');
+        }
+
+        // ========== SELEÇÃO DE VARIANTE ==========
+        function selectVariant(variantId) {
+            selectedVariant = variants.find(v => v.id === variantId);
+            
+            // Atualizar UI
+            document.querySelectorAll('.variant-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.querySelector(`label[onclick="selectVariant('${variantId}')"]`).classList.add('active');
+
+            // Atualizar checkboxes
+            document.querySelectorAll('.variant-checkbox').forEach(checkbox => {
+                checkbox.innerHTML = '';
+            });
+            document.querySelector(`label[onclick="selectVariant('${variantId}')"] .variant-checkbox`).innerHTML = '<i class="fas fa-check"></i>';
+
+            // Atualizar preços
+            updatePricing();
+        }
+
+        // ========== ATUALIZAR PREÇOS ==========
+        function updatePricing() {
+            document.getElementById('mainPrice').textContent = selectedVariant.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+            document.getElementById('oldPrice').textContent = selectedVariant.oldPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+            document.getElementById('discountTag').textContent = selectedVariant.discount + '% OFF';
+            
+            // Atualizar parcelamento
+            const parcelValue = (selectedVariant.oldPrice / 3).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+            document.getElementById('installmentText').textContent = `ou R$ ${parcelValue} em até 3x sem juros`;
+        }
+
+        // ========== CARRINHO ==========
+        function addItem() {
+            const productName = document.getElementById('main-product-title').innerText;
+            const price = selectedVariant.price;
+            const image = productImages[0];
+            const variantName = selectedVariant.name;
+
+            // ID único combinando produto + variante
+            const itemId = `${productName}-${selectedVariant.id}`;
+            const existingItem = cart.find(item => item.id === itemId);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: itemId,
+                    name: productName,
+                    variant: variantName,
+                    price: price,
+                    image: image,
+                    quantity: 1
+                });
+            }
+
+            // Feedback visual
+            const btn = event.target.closest('.btn-buy, .btn-cart');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Adicionado!';
+            btn.style.background = 'var(--success)';
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.background = '';
+            }, 2000);
+
+            console.log('Carrinho:', cart);
+        }
+
+        // Listeners
+        document.getElementById('buy-now-btn').addEventListener('click', addItem);
+        document.getElementById('add-to-cart-btn').addEventListener('click', addItem);
+    </script>
+</body>
+</html>
