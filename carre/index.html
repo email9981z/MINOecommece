@@ -1441,6 +1441,55 @@ body:has(.cart-overlay.active) #notif-premium-container {
             background: var(--brand-primary); color: #fff; font-size: 9px; font-weight: 800;
             padding: 2px 8px; border-radius: 20px;
         }
+
+        /* --- ESTILOS PARA VARIANTES --- */
+.variants-section {
+    margin-bottom: 28px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+
+.variants-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center; gap: 8px;
+    text-transform: uppercase;
+}
+
+.variants-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+@media (min-width: 768px) { .variants-grid { grid-template-columns: 1fr 1fr; } }
+
+.variant-card {
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #fff;
+}
+
+.variant-card:hover { border-color: #cbd5e1; }
+.variant-card.active { border-color: var(--brand-primary); background: #f0f4ff; }
+
+.variant-info .variant-name { display: block; font-weight: 700; font-size: 14px; color: var(--text-main); }
+.variant-info .variant-desc { font-size: 12px; color: var(--text-muted); }
+.variant-price-container { text-align: right; }
+.variant-price-container .variant-price { font-weight: 800; color: var(--brand-primary); }
+.variant-price-container .variant-tag { font-size: 9px; background: var(--brand-primary); color: #fff; padding: 2px 6px; border-radius: 4px; font-weight: 700; text-transform: uppercase; }
+
     
     </style>
 </head>
@@ -1553,6 +1602,17 @@ body:has(.cart-overlay.active) #notif-premium-container {
     </div>
 </div>
 
+                <!-- SEÇÃO DE VARIANTES -->
+<div class="variants-section">
+    <div class="variants-title">
+        <i class="fas fa-box"></i> Escolha sua Versão
+    </div>
+    <div class="variants-grid" id="variantsContainer">
+        <!-- As variantes serão injetadas aqui pelo JavaScript -->
+    </div>
+</div>
+
+
 
                 <div class="price-box">
                     <div class="old-price-row">
@@ -1573,25 +1633,101 @@ body:has(.cart-overlay.active) #notif-premium-container {
         <div class="benefit-item"><i class="fas fa-undo"></i> 90 Dias Garantia</div>
         <div class="benefit-item"><i class="fas fa-check-circle"></i> Certificado</div>
     </div>
-    
-                <div class="ns-seller-info">
-                    <i class="fas fa-check-circle" style="color: var(--success);"></i>
-                    <span>Vendido e entregue por <strong>Apple Store Brasil</strong></span>
-                </div>
-                <div class="ns-rating-container">
-                    <div class="ns-rating-details">
-                        <i class="fas fa-star"></i>
-                        <span><strong>4.9</strong> (+ 100 mil avaliações)</span>
-                        <span style="margin-left: auto; color: var(--success); font-size: 11px; font-weight: 700;">97% de satisfação</span>
-                    </div>
-                    <div class="ns-rating-bar" style="margin-top: 8px; margin-bottom: 0;">
-                        <div class="ns-rating-fill"></div>
-                    </div>
-                </div>
+
 
                 <!--INICIO CÓDIGO FRETE OTIMIZADO-->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script>
+
+    // 1. Configuração das Variantes
+const variants = [
+    {
+        id: 'completo',
+        name: 'Cabo + Fonte (Original)',
+        description: '',
+        price: 89.90,
+        oldPrice: 176.20,
+        discount: 38,
+        isDefault: true,
+        images: [
+            "https://i.postimg.cc/V6VPx6ym/D-Q-NP-940362-MLB109738020426-042026-F.webp",
+            "https://i.postimg.cc/hjftzNcc/D-Q-NP-842747-MLB108247681806-032026-F.webp",
+            "https://i.postimg.cc/1zWzzyxv/D-Q-NP-750126-MLB108249557078-032026-F.webp",
+            "https://i.postimg.cc/Px9rmK5N/D-Q-NP-864374-MLB108247681796-032026-F.webp"
+        ]
+    },
+    {
+        id: 'fonte',
+        name: 'Apenas Fonte (Original)',
+        description: '',
+        price: 59.90,
+        oldPrice: 119.90,
+        discount: 50,
+        isDefault: false,
+        images: [
+            "https://i.postimg.cc/1zWzzyxv/D-Q-NP-750126-MLB108249557078-032026-F.webp",
+            "https://i.postimg.cc/pdPv84QG/D-Q-NP-999780-MLB100179465188-122025-F.webp",
+            "https://i.postimg.cc/KcCRLc1W/D-Q-NP-958813-MLB100669927979-122025-F.webp",
+             "https://i.postimg.cc/9QdVDC9V/D-Q-NP-678372-MLB100669869949-122025-F.webp"
+        ]
+    }
+];
+
+let selectedVariant = variants[0];
+
+// 2. Função para renderizar as variantes na tela
+function initializeVariants() {
+    const container = document.getElementById('variantsContainer');
+    container.innerHTML = variants.map(v => `
+        <div class="variant-card ${v.isDefault ? 'active' : ''}" onclick="selectVariant('${v.id}')" id="var-${v.id}">
+            <div class="variant-info">
+                <span class="variant-name">${v.name}</span>
+                <span class="variant-desc">${v.description}</span>
+            </div>
+            <div class="variant-price-container">
+                <span class="variant-price">R$ ${v.price.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span><br>
+                ${v.discount ? `<span class="variant-tag">${v.discount}% OFF</span>` : ''}
+            </div>
+        </div>
+    `).join('');
+}
+
+// 3. Função para trocar a variante e atualizar preços
+function selectVariant(id) {
+    selectedVariant = variants.find(v => v.id === id);
+    
+    // Atualiza visual dos cards
+    document.querySelectorAll('.variant-card').forEach(c => c.classList.remove('active'));
+    
+    const activeCard = document.getElementById(`var-${id}`);
+    activeCard.classList.add('active');
+    
+    // Atualiza os preços na página
+    document.getElementById('mainPrice').innerText = selectedVariant.price.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+    document.getElementById('oldPrice').innerText = selectedVariant.oldPrice.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+    
+    // Atualiza o parcelamento (ex: 3x)
+    const valorParcela = (selectedVariant.oldPrice / 3).toLocaleString('pt-BR', {minimumFractionDigits: 2});
+    const installmentEl = document.querySelector('.installment-text');
+    if(installmentEl) installmentEl.innerHTML = `ou R$ ${selectedVariant.oldPrice.toLocaleString('pt-BR', {minimumFractionDigits: 2})} em até 3x sem juros`;
+
+    // Atualiza a galeria de imagens
+    if (typeof initGallery === 'function') {
+        initGallery();
+    }
+
+    // Rola para o topo da página suavemente
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
+
+// 4. Chame a inicialização dentro do seu DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+    initializeVariants();
+});
+
   function convertDate(e) {
       var t, o = new Date(e);
       // Retorna apenas o dia com zero à esquerda se necessário
@@ -2064,12 +2200,12 @@ const productImages = [
 
 
 
-        function initGallery() {
+function initGallery() {
     const slider = document.getElementById('imageSlider');
     const thumbContainer = document.getElementById('thumbnailsContainer');
     
     // Pega as imagens da variante atual
-    const images = productImages;
+    const images = (selectedVariant && selectedVariant.images) ? selectedVariant.images : productImages;
     
     slider.innerHTML = images.map(img => `
         <div class="main-image-item">
@@ -2430,30 +2566,57 @@ window.addEventListener('load', function() {
             }
 
                         function addItem() {
-                const productName = document.getElementById('main-product-title').innerText;
-                const priceText = document.getElementById('mainPrice').innerText.replace('.', '').replace(',', '.');
-                const price = parseFloat(priceText);
-                const image = productImages[0];
+    // Pega o título do produto
+    const productName = document.getElementById('main-product-title').innerText;
+    
+    // Pega o preço atual (já formatado pela variante selecionada)
+    const priceText = document.getElementById('mainPrice').innerText.replace('.', '').replace(',', '.');
+    const price = parseFloat(priceText);
+    
+    // Pega a imagem (prioriza a primeira imagem da variante selecionada)
+    let image = "";
+    if (typeof selectedVariant !== 'undefined' && selectedVariant.images && selectedVariant.images.length > 0) {
+        image = selectedVariant.images[0];
+    } else if (typeof productImages !== 'undefined' && productImages.length > 0) {
+        image = productImages[0];
+    }
+    
+    // Pega o nome da variante selecionada (se existir)
+    const variantName = (typeof selectedVariant !== 'undefined') ? selectedVariant.name : "";
+    const variantId = (typeof selectedVariant !== 'undefined') ? selectedVariant.id : "padrao";
 
-                const itemId = productName;
-                const existingItem = cart.find(item => item.id === itemId);
+    // Cria um ID único combinando produto e variante
+    const itemId = productName + '-' + variantId;
+    
+    // Verifica se o item já está no carrinho
+    const existingItem = cart.find(item => item.id === itemId);
 
-                if (existingItem) {
-                    existingItem.quantity += 1;
-                } else {
-                    cart.push({
-                        id: itemId,
-                        name: productName,
-                        variant: "",
-                        price: price,
-                        image: image,
-                        quantity: 1
-                    });
-                }
+    if (existingItem) {
+        existingItem.quantity += 1;
+    } else {
+        // Adiciona o novo item com todas as propriedades necessárias
+        cart.push({
+            id: itemId,
+            name: productName,
+            variant: variantName,
+            price: price,
+            image: image,
+            quantity: 1 // Garante que a quantidade comece em 1
+        });
+    }
 
-                window.updateCartUI();
-                if (!cartSidebar.classList.contains('active')) toggleCart();
-            }
+    // Atualiza a interface do carrinho
+    window.updateCartUI();
+    
+    // Abre o carrinho se estiver fechado
+    if (typeof toggleCart === 'function') {
+        const cartSidebar = document.getElementById('cartSidebar');
+        if (cartSidebar && !cartSidebar.classList.contains('active')) {
+            toggleCart();
+        }
+    }
+}
+
 
             // Expose quantity control functions globally
             window.increaseQty = function(index) {
