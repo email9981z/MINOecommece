@@ -1187,22 +1187,22 @@
             bottom: 20px;
             left: 20px;
             background: #fff;
-            padding: 10px 15px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            padding: 12px 16px;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             z-index: 9999;
             transform: translateX(-150%);
-            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid #f1f5f9;
-            max-width: 280px;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(0,0,0,0.05);
+            max-width: 300px;
         }
         .live-notification.show { transform: translateX(0); }
-        .live-notification img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--brand-primary); }
+        .live-notification img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid #f1f5f9; }
         .notif-content p { font-size: 13px; margin: 0; color: #1e293b; line-height: 1.4; }
-        .notif-content span { font-size: 11px; color: #64748b; }
+        .notif-content span { font-size: 11px; color: #94a3b8; font-weight: 500; }
 
         /* Shimmer Animation */
         .btn-shimmer { position: relative; overflow: hidden; }
@@ -1310,22 +1310,22 @@
             bottom: 20px;
             left: 20px;
             background: #fff;
-            padding: 10px 15px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            padding: 12px 16px;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             z-index: 9999;
             transform: translateX(-150%);
-            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid #f1f5f9;
-            max-width: 280px;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(0,0,0,0.05);
+            max-width: 300px;
         }
         .live-notification.show { transform: translateX(0); }
-        .live-notification img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--brand-primary); }
+        .live-notification img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid #f1f5f9; }
         .notif-content p { font-size: 13px; margin: 0; color: #1e293b; line-height: 1.4; }
-        .notif-content span { font-size: 11px; color: #64748b; }
+        .notif-content span { font-size: 11px; color: #94a3b8; font-weight: 500; }
 
         /* Shimmer Animation */
         .btn-shimmer { position: relative; overflow: hidden; }
@@ -2765,9 +2765,9 @@ window.addEventListener('load', function() {
 
     <!-- Live Sales Notification -->
     <div class="live-notification" id="liveNotification">
-        <img src="https://i.pravatar.cc/100" id="notifAvatar" alt="User">
+        <img src="https://i.pravatar.cc/100?u=1" id="notifAvatar" alt="User">
         <div class="notif-content">
-            <p id="notifText"><strong>João S.</strong> de São Paulo acabou de comprar!</p>
+            <p id="notifText"><strong>João Silva</strong> de São Paulo/SP acabou de comprar!</p>
             <span id="notifTime">Há 2 minutos</span>
         </div>
     </div>
@@ -2812,19 +2812,29 @@ window.addEventListener('load', function() {
             });
         }
 
-        // 2. Live Social Proof Logic
-        const names = ['Marcos', 'Felipe', 'Ricardo', 'André', 'Gustavo', 'Lucas', 'Vinícius', 'João', 'Mateus', 'Diego'];
-        const cities = ['São Paulo', 'Rio de Janeiro', 'Belo Horizonte', 'Curitiba', 'Porto Alegre', 'Salvador', 'Brasília', 'Fortaleza'];
+        // 2. Realistic Social Proof Logic
+        const salesData = [
+            { name: 'Ricardo Oliveira', city: 'São Paulo/SP', avatar: 'https://randomuser.me/api/portraits/men/32.jpg' },
+            { name: 'Felipe Santos', city: 'Rio de Janeiro/RJ', avatar: 'https://randomuser.me/api/portraits/men/44.jpg' },
+            { name: 'Marcos Souza', city: 'Belo Horizonte/MG', avatar: 'https://randomuser.me/api/portraits/men/85.jpg' },
+            { name: 'André Costa', city: 'Curitiba/PR', avatar: 'https://randomuser.me/api/portraits/men/22.jpg' },
+            { name: 'Gustavo Lima', city: 'Porto Alegre/RS', avatar: 'https://randomuser.me/api/portraits/men/67.jpg' },
+            { name: 'Lucas Pereira', city: 'Salvador/BA', avatar: 'https://randomuser.me/api/portraits/men/11.jpg' },
+            { name: 'Vinícius Rocha', city: 'Brasília/DF', avatar: 'https://randomuser.me/api/portraits/men/52.jpg' },
+            { name: 'João Mendes', city: 'Fortaleza/CE', avatar: 'https://randomuser.me/api/portraits/men/91.jpg' },
+            { name: 'Mateus Alencar', city: 'Recife/PE', avatar: 'https://randomuser.me/api/portraits/men/36.jpg' },
+            { name: 'Diego Ferreira', city: 'Goiânia/GO', avatar: 'https://randomuser.me/api/portraits/men/29.jpg' }
+        ];
+        
         const notification = document.getElementById('liveNotification');
         
         function showNotification() {
-            const name = names[Math.floor(Math.random() * names.length)];
-            const city = cities[Math.floor(Math.random() * cities.length)];
-            const time = Math.floor(Math.random() * 5) + 1;
+            const sale = salesData[Math.floor(Math.random() * salesData.length)];
+            const time = Math.floor(Math.random() * 4) + 1;
             
-            document.getElementById('notifText').innerHTML = `<strong>${name} ${name.charAt(0)}.</strong> de ${city} acabou de comprar!`;
+            document.getElementById('notifText').innerHTML = `<strong>${sale.name}</strong> de ${sale.city} acabou de comprar!`;
             document.getElementById('notifTime').innerText = `Há ${time} minutos`;
-            document.getElementById('notifAvatar').src = `https://i.pravatar.cc/100?u=${Math.random()}`;
+            document.getElementById('notifAvatar').src = sale.avatar;
             
             notification.classList.add('show');
             setTimeout(() => {
@@ -2832,8 +2842,8 @@ window.addEventListener('load', function() {
             }, 5000);
         }
         
-        setTimeout(showNotification, 3000);
-        setInterval(showNotification, 15000);
+        setTimeout(showNotification, 4000);
+        setInterval(showNotification, 18000);
 
         // 3. Countdown Timer Logic
         function startTimer(duration, display) {
