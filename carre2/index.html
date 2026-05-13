@@ -2573,8 +2573,13 @@ window.addEventListener('load', function() {
     const priceText = document.getElementById('mainPrice').innerText.replace('.', '').replace(',', '.');
     const price = parseFloat(priceText);
     
-    // Pega a imagem (garante que use a primeira imagem do array productImages)
-    const image = (typeof productImages !== 'undefined' && productImages.length > 0) ? productImages[0] : '';
+    // Pega a imagem (prioriza a primeira imagem da variante selecionada)
+    let image = "";
+    if (typeof selectedVariant !== 'undefined' && selectedVariant.images && selectedVariant.images.length > 0) {
+        image = selectedVariant.images[0];
+    } else if (typeof productImages !== 'undefined' && productImages.length > 0) {
+        image = productImages[0];
+    }
     
     // Pega o nome da variante selecionada (se existir)
     const variantName = (typeof selectedVariant !== 'undefined') ? selectedVariant.name : "";
