@@ -2676,7 +2676,7 @@ const allReviews = [
         }
 
         
-        function openImageModal(src) {
+        window.openImageModal = function(src) {
             const modal = document.getElementById('imageModal');
             const modalImg = document.getElementById('modalImage');
             if (modal && modalImg) {
@@ -2685,7 +2685,7 @@ const allReviews = [
                 document.body.style.overflow = 'hidden';
             }
         }
-        function closeImageModal() {
+        window.closeImageModal = function() {
             const modal = document.getElementById('imageModal');
             if (modal) {
                 modal.classList.remove('active');
@@ -3359,9 +3359,9 @@ if (timerDisplay) {
     </script>
     
 <!-- Modal para Visualização de Imagem -->
-    <div id="imageModal" class="image-modal" onclick="closeImageModal(false)">
-        <span class="image-modal-close" onclick="closeImageModal(false)">&times;</span>
-        <img class="image-modal-content" id="modalImg">
+    <div id="imageModal" class="image-modal" onclick="window.closeImageModal()">
+        <span class="image-modal-close" onclick="window.closeImageModal()">&times;</span>
+        <img class="image-modal-content" id="modalImage">
     </div>
 </body>
 </html>
