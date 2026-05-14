@@ -2475,28 +2475,27 @@ https://http2.mlstatic.com/D_NQ_NP_2X_600660-MLA111197418763_052026-F.webp
         const carouselImages = carouselImagesRaw.trim().split('\n').map(url => url.trim()).filter(url => url !== '');
 
 const allReviews = [
-            const avaliacoesCarregadorIphone = [
-    { 'name': 'Gustavo Martins', 'date': 'Hoje', 'rating': 5, 'content': 'TOP Demais! Original mesmo, reconhece o carregamento rápido na hora. Podem comprar!' },
-    { 'name': 'Bianca Gomes', 'date': 'Hoje', 'rating': 5, 'content': 'Chegou rápido e bem embalado. O carregador é realmente original, qualidade Apple.' },
-    { 'name': 'Rodrigo Pedro', 'date': 'Hoje', 'rating': 5, 'content': 'Produto 100% original, carregamento turbo funcionando perfeito. Recomendo!' },
-    { 'name': 'Viviane Rocha', 'date': 'Ontem', 'rating': 5, 'content': 'Recomendo, chegou rápido e o preço é justo por um item original. Vale cada centavo.' },
-    { 'name': 'João Costa', 'date': 'Ontem', 'rating': 5, 'content': 'Melhor carregador que já usei. Carrega o iPhone muito rápido e não esquenta o aparelho.' },
-    { 'name': 'Larissa Oliveira', 'date': 'Ontem', 'rating': 4, 'content': 'Sempre compro aqui, o único lugar que confio que é original. Chegou tudo certo.' },
-    { 'name': 'Angélica Santos', 'date': 'Ontem', 'rating': 5, 'content': 'Excelente atendimento via WhatsApp. O carregador chegou bem embalado e protegido.' },
-    { 'name': 'Alexandre Teixeira', 'date': 'Ontem', 'rating': 5, 'content': 'Carregamento PD muito rápido, ideal para quem tem pressa. Muito satisfeito!' },
-    { 'name': 'Mateus Costa', 'date': 'Ontem', 'rating': 5, 'content': 'Produto original mesmo. Verifiquei o selo da Anatel e está tudo correto.' },
-    { 'name': 'Mariana S.', 'date': 'Há 02 dias', 'rating': 5, 'content': 'Ótimo produto, original e com garantia. Já é o meu segundo para deixar no escritório.' },
-    { 'name': 'Diego Almeida', 'date': 'Há 02 dias', 'rating': 5, 'content': 'Acabamento impecável. O carregador é robusto e passa muita confiança.' },
-    { 'name': 'Samira Lima', 'date': 'Há 02 dias', 'rating': 5, 'content': 'Produto excelente! Estou usando há semanas e a saúde da bateria continua perfeita.' },
-    { 'name': 'Lucas Pedro', 'date': 'Há 02 dias', 'rating': 5, 'content': 'A velocidade de carga desse adaptador de 20W é outro nível. Recomendo!' },
-    { 'name': 'Bruno Melo', 'date': 'Há 02 dias', 'rating': 5, 'content': 'Melhor preço que encontrei para o carregador Apple original. Entrega rápida.' },
-    { 'name': 'Fernanda Silva', 'date': 'Há 03 dias', 'rating': 4, 'content': 'Chegou dentro do prazo. Produto de qualidade e homologado, recomendo a todos.' },
-    { 'name': 'Ricardo Souza', 'date': 'Há 03 dias', 'rating': 5, 'content': 'Atendimento nota 10 e produto de extrema qualidade. Parabéns pela loja.' },
-    { 'name': 'Gabriel Ramos', 'date': 'Há 03 dias', 'rating': 5, 'content': 'Funciona perfeitamente no meu iPhone 15 e também no iPad. Top!' },
-    { 'name': 'Marcela Vieira', 'date': 'Há 03 dias', 'rating': 5, 'content': 'O carregador é robusto e parece ser bem durável. Ótima aquisição.' },
-    { 'name': 'Andréia Santos', 'date': 'Há 03 dias', 'rating': 5, 'content': 'Comprei para usar com meu MagSafe e funcionou perfeitamente com potência máxima.' },
-    { 'name': 'Felipe Diniz', 'date': 'Há 03 dias', 'rating': 5, 'content': 'A melhor loja para comprar acessórios originais. Podem confiar.' }
-];
+            {'name': 'Gustavo Martins', 'date': 'Hoje', 'rating': 5, 'content': 'TOP Demais Original, tem nem oque falar, só comprem e sejam felizes!'},
+            {'name': 'Lucas Gomes', 'date': 'Hoje', 'rating': 5, 'content': 'Chegou rápido e bem embalado. O controle pe original.'},
+            {'name': 'Rodrigo Pedro', 'date': 'Hoje', 'rating': 5, 'content': 'Controle 100% original, conectou de primeira no meu PS5. Recomendo!'},
+            {'name': 'Vinícius Rocha', 'date': 'Ontem', 'rating': 5, 'content': 'Recomendo, chegou rápido e o preço é justo. Vale cada centavo.'},
+            {'name': 'João Costa', 'date': 'Ontem', 'rating': 5, 'content': 'Melhor controle que já usei. A bateria dura bastante e a precisão dos analógicos é perfeita.'},
+            {'name': 'Rodrigo Oliveira', 'date': 'Ontem', 'rating': 4, 'content': 'Sempre compro aqui, o único lugar que confio que é original. Chegou tudo certo.'},
+            {'name': 'Diego Santos', 'date': 'Ontem', 'rating': 5, 'content': 'Excelente atendimento via WhatsApp. O controle chegou bem embalado e protegido.'},
+            {'name': 'Alexandre Teixeira', 'date': 'Ontem', 'rating': 5, 'content': 'Os analógicos são muito precisos, ideal para jogos de FPS. Muito satisfeito!'},
+            {'name': 'Mateus Costa', 'date': 'Ontem', 'rating': 5, 'content': 'Produto original mesmo. Verifiquei o selo da Anatel e está tudo correto.'},
+            {'name': 'Thiago S.', 'date': 'Há 02 dias', 'rating': 5, 'content': 'Ótimo produto, original e com garantia. Já é meu segundo DualSense.'},
+            {'name': 'Diego Almeida', 'date': 'Há 02 dias', 'rating': 5, 'content': 'A cor branca é muito elegante. O controle é leve e confortável.'},
+            {'name': 'Samuel Lima', 'date': 'Há 02 dias', 'rating': 5, 'content': 'Produto excelente! Estou usando há semanas e não tive nenhum problema.'},
+            {'name': 'Lucas Pedro', 'date': 'Há 02 dias', 'rating': 5, 'content': 'A imersão que esse controle proporciona é de outro nível. Recomendo!'},
+            {'name': 'Bruno Melo', 'date': 'Há 02 dias', 'rating': 5, 'content': 'Melhor preço que encontrei para o DualSense original. Entrega rápida.'},
+            {'name': 'Fernando Silva', 'date': 'Há 03 dias', 'rating': 4, 'content': 'Chegou dentro do prazo. Produto de qualidade, recomendo a todos.'},
+            {'name': 'Ricardo Souza', 'date': 'Há 03 dias', 'rating': 5, 'content': 'Atendimento nota 10 e produto de extrema qualidade. Parabéns pela loja.'},
+            {'name': 'Gabriel Ramos', 'date': 'Há 03 dias', 'rating': 5, 'content': 'O touchpad e o microfone integrado funcionam perfeitamente. Top!'},
+            {'name': 'Marcelo Vieira', 'date': 'Há 03 dias', 'rating': 5, 'content': 'O controle é robusto e parece ser bem durável. Ótima aquisição.'},
+            {'name': 'André Santos', 'date': 'Há 03 dias', 'rating': 5, 'content': 'Comprei para jogar no PC e funcionou perfeitamente via cabo e Bluetooth.'},
+            {'name': 'Felipe Diniz', 'date': 'Há 03 dias', 'rating': 5, 'content': 'A melhor loja para comprar acessórios de PS5. Podem confiar.'}
+        ];
         let currentPage = 1;
         const reviewsPerPage = 4;
 
