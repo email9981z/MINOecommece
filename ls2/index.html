@@ -947,7 +947,7 @@ body:has(.cart-overlay.active) #notif-premium-container {
         .reviews-grid::-webkit-scrollbar { display: none; }
         .reviews-grid.active { cursor: grabbing; }
         .review-card { 
-            flex: 0 0 calc(20% - 20px); 
+            flex: 0 0 calc(25% - 18px); 
             min-width: 300px; 
             padding: 28px; 
             border: 1px solid #e2e8f0; 
@@ -2681,7 +2681,10 @@ const allReviews = [
     { 'name': 'Everton R.', 'date': 'Há 23 dias', 'rating': 5, 'content': 'Entrega antes do prazo, parabéns.' }
         ];
         let currentPage = 1;
-        const reviewsPerPage = 100;
+        // Configuração: Cada bloco contém 4 avaliações.
+        // Inicialmente exibimos 5 blocos (páginas).
+        const reviewsPerPage = 4;
+        let maxVisiblePage = 5;
 
         function renderCarousel() {
             const carouselContainer = document.getElementById('reviewCarousel');
@@ -2893,8 +2896,13 @@ const allReviews = [
             };
             pagination.appendChild(prevBtn);
 
-            // Números das Páginas
-            for(let i=1; i<=totalPages; i++) {
+            // Números das Páginas - Lógica de exibição progressiva
+            // Atualiza a página máxima visível se o usuário chegar nela
+            if (activePage >= maxVisiblePage && maxVisiblePage < totalPages) {
+                maxVisiblePage = activePage + 1;
+            }
+
+            for(let i=1; i<=Math.min(totalPages, maxVisiblePage); i++) {
                 const btn = document.createElement('button');
                 btn.className = `page-btn ${i === activePage ? 'active' : ''}`;
                 btn.innerText = i;
@@ -2910,6 +2918,7 @@ const allReviews = [
             const nextBtn = document.createElement('button');
             nextBtn.className = 'page-btn';
             nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            // Desabilita se for a última página total OU se for a última página visível no momento (opcional, mas seguindo a lógica de "ir aparecendo")
             nextBtn.disabled = activePage === totalPages;
             nextBtn.onclick = () => { 
                 if(currentPage < totalPages) {
