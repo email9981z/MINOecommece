@@ -2428,10 +2428,11 @@ function initGallery() {
         const reviewImagesRaw = `
 https://http2.mlstatic.com/D_NQ_NP_2X_768110-MLA111699742781_052026-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_810264-MLA74447974619_022024-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_882106-MLA80179718673_102024-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_627733-MLA84987059447_052025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_805135-MLA104164848979_012026-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_695049-MLA79584140604_102024-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_970321-MLA109980758735_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_972380-MLA96598661017_102025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_884753-MLA105003654727_012026-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_633492-MLA97842282081_112025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_806579-MLA103228565748_012026-F.webp
@@ -2449,29 +2450,35 @@ https://http2.mlstatic.com/D_NQ_NP_2X_929940-MLA80179483247_102024-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_997721-MLA97911531666_112025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_887988-MLA82319644505_022025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_919932-MLA110742556688_052026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_965578-MLA101813840197_122025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_811775-MLA105401777982_012026-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_821378-MLA84687996052_052025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_870633-MLA82482516671_022025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_897829-MLA97380442980_112025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_921805-MLA98346449239_112025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_907124-MLA82609404104_032025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_927519-MLA82775327948_032025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_677016-MLA100445613538_122025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_693804-MLA103854521076_012026-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_820931-MLA81201116060_122024-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_984439-MLA100963788929_122025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_884534-MLA102872221473_122025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_798517-MLA97911571158_112025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_783755-MLA101096173775_122025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_714430-MLA106260987821_012026-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_699065-MLA107509147459_022026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_936822-MLA109900883232_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_747232-MLA96598949213_102025-F.webp
 `;
 
         const carouselImagesRaw = `
 https://http2.mlstatic.com/D_NQ_NP_2X_768110-MLA111699742781_052026-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_810264-MLA74447974619_022024-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_882106-MLA80179718673_102024-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_627733-MLA84987059447_052025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_805135-MLA104164848979_012026-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_695049-MLA79584140604_102024-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_970321-MLA109980758735_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_972380-MLA96598661017_102025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_884753-MLA105003654727_012026-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_633492-MLA97842282081_112025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_806579-MLA103228565748_012026-F.webp
@@ -2489,20 +2496,25 @@ https://http2.mlstatic.com/D_NQ_NP_2X_929940-MLA80179483247_102024-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_997721-MLA97911531666_112025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_887988-MLA82319644505_022025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_919932-MLA110742556688_052026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_965578-MLA101813840197_122025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_811775-MLA105401777982_012026-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_821378-MLA84687996052_052025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_870633-MLA82482516671_022025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_897829-MLA97380442980_112025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_921805-MLA98346449239_112025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_907124-MLA82609404104_032025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_927519-MLA82775327948_032025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_677016-MLA100445613538_122025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_693804-MLA103854521076_012026-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_820931-MLA81201116060_122024-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_984439-MLA100963788929_122025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_884534-MLA102872221473_122025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_798517-MLA97911571158_112025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_783755-MLA101096173775_122025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_714430-MLA106260987821_012026-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_699065-MLA107509147459_022026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_936822-MLA109900883232_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_747232-MLA96598949213_102025-F.webp
 `;
 
         // Processamento automático das listas
