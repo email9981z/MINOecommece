@@ -1490,85 +1490,6 @@ body:has(.cart-overlay.active) #notif-premium-container {
 .variant-price-container .variant-price { font-weight: 800; color: var(--brand-primary); }
 .variant-price-container .variant-tag { font-size: 9px; background: var(--brand-primary); color: #fff; padding: 2px 6px; border-radius: 4px; font-weight: 700; text-transform: uppercase; }
 
-        /* --- ESTILOS DAS AVALIAÇÕES E CARROSSEL --- */
-.review-image-container {
-    margin: 15px 0;
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid #edf2f7;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    max-width: 180px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-}
-.review-image-container:hover { transform: scale(1.02); }
-.review-image { width: 100%; height: 180px; display: block; object-fit: cover; }
-
-/* --- LIGHTBOX (MODAL DE IMAGEM) --- */
-.image-modal {
-    display: none;
-    position: fixed;
-    z-index: 10000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.95);
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    touch-action: none;
-    overflow: hidden;
-}
-.image-modal.active { display: flex; opacity: 1; }
-.image-modal-content {
-    max-width: 95%;
-    max-height: 95%;
-    border-radius: 8px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.5);
-    transform: scale(0.9);
-    transition: transform 0.3s ease;
-    cursor: grab;
-}
-.image-modal.active .image-modal-content { transform: scale(1); }
-.image-modal-close {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    color: #fff;
-    font-size: 35px;
-    cursor: pointer;
-    z-index: 10001;
-    width: 45px;
-    height: 45px;
-    background: rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-}
-
-/* --- SEÇÃO DE AVALIAÇÕES --- */
-.reviews-section { padding: 80px 0; background: #f8fafc; border-top: 1px solid var(--border); }
-.reviews-header { margin-bottom: 48px; text-align: center; }
-.reviews-header h2 { font-size: 32px; font-weight: 800; color: var(--text-main); margin-bottom: 16px; }
-.overall-rating { display: flex; justify-content: center; align-items: center; gap: 16px; margin-bottom: 8px; }
-.stars-large { color: #f59e0b; font-size: 24px; display: flex; gap: 4px; }
-.rating-number { font-size: 42px; font-weight: 800; }
-.total-reviews-count { color: var(--text-muted); font-size: 14px; font-weight: 500; }
-
-.reviews-grid { display: grid; grid-template-columns: 1fr; gap: 24px; margin-bottom: 40px; }
-.review-card { padding: 28px; border: 1px solid #e2e8f0; border-radius: 16px; background: #fff; position: relative; overflow: hidden; }
-.review-card:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
-.reviewer-avatar { width: 48px; height: 48px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; }
-.verified-badge { font-size: 11px; color: #059669; background: #ecfdf5; padding: 2px 8px; border-radius: 12px; width: fit-content; }
-
-@media (min-width: 768px) {
-    .reviews-grid { grid-template-columns: 1fr 1fr; }
-}
-
-
     
     </style>
 </head>
@@ -2147,27 +2068,22 @@ document.addEventListener('DOMContentLoaded', function() {
     </p>
 </div>
 
-    <!-- Seção Principal de Avaliações -->
-<section class="reviews-section">
-    <div class="container">
-        <div class="reviews-header">
-            <div style="text-align: left; margin-bottom: 20px;">
-                <h3 style="font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 10px;">Fotos dos Clientes</h3>
-                <div class="carousel-container" id="reviewCarousel"></div>
-            </div>
-            <h2>Avaliações dos Clientes</h2>
-            <div class="overall-rating">
-                <span class="rating-number">4.9</span>
-                <div class="stars-large">
-                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+    <section class="reviews-section">
+        <div class="container">
+            <div class="reviews-header">
+                <h2>Avaliações dos Clientes</h2>
+                <div class="overall-rating">
+                    <span class="rating-number">4.9</span>
+                    <div class="stars-large">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
                 </div>
+                <span class="total-reviews-count">1.983 avaliações verificadas</span>
             </div>
-            <span class="total-reviews-count">1.983 avaliações verificadas</span>
+            <div class="reviews-grid" id="reviewsGrid"></div>
+            <div class="pagination" id="pagination"></div>
         </div>
-        <div class="reviews-grid" id="reviewsGrid"></div>
-        <div class="pagination" id="pagination"></div>
-    </div>
-</section>
+    </section>
 
         <!-- Seção FAQ -->
 <section class="faq-section">
@@ -2289,7 +2205,7 @@ function initGallery() {
     const thumbContainer = document.getElementById('thumbnailsContainer');
     
     // Pega as imagens da variante atual
-    const images = productImages;
+    const images = (selectedVariant && selectedVariant.images) ? selectedVariant.images : productImages;
     
     slider.innerHTML = images.map(img => `
         <div class="main-image-item">
@@ -2344,11 +2260,7 @@ function initGallery() {
 
 
         // Initialize on load
-        window.onload = () => {
-            initGallery();
-            renderCarousel();
-            renderReviews(currentPage);
-        };
+        window.onload = initGallery;
         
         // Listen for scroll on main slider to sync thumbnails
         document.getElementById('imageSlider').addEventListener('scroll', () => {
@@ -2363,137 +2275,30 @@ function initGallery() {
         });
 
                 // LÓGICA DAS AVALIAÇÕES E TABS
-        // COLE SEUS LINKS ABAIXO (UM POR LINHA, SEM ASPAS OU VÍRGULAS)
-        const reviewImagesRaw = `
-https://http2.mlstatic.com/D_NQ_NP_2X_773111-MLA104145341742_012026-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_980200-MLA99026083766_112025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_723612-MLA88546851994_072025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_966551-MLA109092382566_042026-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_872837-MLA94830780752_102025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_799514-MLA93286320693_092025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_611739-MLA94830373848_102025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_783103-MLA88896175705_072025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_647842-MLA109809073254_042026-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_912590-MLA108979404848_032026-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_943525-MLA82210012559_022025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_694562-MLA94830324544_102025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_902924-MLA104301249242_012026-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_712429-MLA81929575572_022025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_689799-MLA99846224637_112025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_604399-MLA99229715813_112025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_785867-MLA109929846483_042026-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_686125-MLA102166518300_122025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_815109-MLA99817333683_112025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_690220-MLA110688778872_052026-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_865561-MLA76889616528_062024-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_910000-MLA109981297597_042026-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_932043-MLA96137548487_102025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_697979-MLA99924488980_122025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_604063-MLA109406830602_042026-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_927658-MLA94830353956_102025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_930098-MLA94830790702_102025-F.webp
-`;
-
-        const carouselImagesRaw = `
-https://http2.mlstatic.com/D_NQ_NP_2X_773111-MLA104145341742_012026-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_980200-MLA99026083766_112025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_723612-MLA88546851994_072025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_966551-MLA109092382566_042026-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_872837-MLA94830780752_102025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_799514-MLA93286320693_092025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_611739-MLA94830373848_102025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_783103-MLA88896175705_072025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_647842-MLA109809073254_042026-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_912590-MLA108979404848_032026-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_943525-MLA82210012559_022025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_694562-MLA94830324544_102025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_902924-MLA104301249242_012026-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_712429-MLA81929575572_022025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_689799-MLA99846224637_112025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_604399-MLA99229715813_112025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_785867-MLA109929846483_042026-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_686125-MLA102166518300_122025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_815109-MLA99817333683_112025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_690220-MLA110688778872_052026-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_865561-MLA76889616528_062024-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_910000-MLA109981297597_042026-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_932043-MLA96137548487_102025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_697979-MLA99924488980_122025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_604063-MLA109406830602_042026-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_927658-MLA94830353956_102025-F.webp
-https://http2.mlstatic.com/D_NQ_NP_2X_930098-MLA94830790702_102025-F.webp
-`;
-
         const allReviews = [
-            {'name': 'Gustavo Martins', 'date': 'Hoje', 'rating': 5, 'content': 'TOP Demais Original, tem nem oque falar, só comprem e sejam felizes!'},
-            {'name': 'Lucas Gomes', 'date': 'Hoje', 'rating': 5, 'content': 'Chegou rápido e bem embalado. O controle pe original.'},
-            {'name': 'Rodrigo Pedro', 'date': 'Hoje', 'rating': 5, 'content': 'Controle 100% original, conectou de primeira no meu PS5. Recomendo!'},
-            {'name': 'Vinícius Rocha', 'date': 'Ontem', 'rating': 5, 'content': 'Recomendo, chegou rápido e o preço é justo. Vale cada centavo.'},
-            {'name': 'João Costa', 'date': 'Ontem', 'rating': 5, 'content': 'Melhor controle que já usei. A bateria dura bastante e a precisão dos analógicos é perfeita.'},
-            {'name': 'Rodrigo Oliveira', 'date': 'Ontem', 'rating': 4, 'content': 'Sempre compro aqui, o único lugar que confio que é original. Chegou tudo certo.'},
-            {'name': 'Diego Santos', 'date': 'Ontem', 'rating': 5, 'content': 'Excelente atendimento via WhatsApp. O controle chegou bem embalado e protegido.'},
-            {'name': 'Alexandre Teixeira', 'date': 'Ontem', 'rating': 5, 'content': 'Os analógicos são muito precisos, ideal para jogos de FPS. Muito satisfeito!'},
-            {'name': 'Mateus Costa', 'date': 'Ontem', 'rating': 5, 'content': 'Produto original mesmo. Verifiquei o selo da Anatel e está tudo correto.'},
-            {'name': 'Thiago S.', 'date': 'Há 02 dias', 'rating': 5, 'content': 'Ótimo produto, original e com garantia. Já é meu segundo DualSense.'},
-            {'name': 'Diego Almeida', 'date': 'Há 02 dias', 'rating': 5, 'content': 'A cor branca é muito elegante. O controle é leve e confortável.'},
-            {'name': 'Samuel Lima', 'date': 'Há 02 dias', 'rating': 5, 'content': 'Produto excelente! Estou usando há semanas e não tive nenhum problema.'},
-            {'name': 'Lucas Pedro', 'date': 'Há 02 dias', 'rating': 5, 'content': 'A imersão que esse controle proporciona é de outro nível. Recomendo!'},
-            {'name': 'Bruno Melo', 'date': 'Há 02 dias', 'rating': 5, 'content': 'Melhor preço que encontrei para o DualSense original. Entrega rápida.'},
-            {'name': 'Fernando Silva', 'date': 'Há 03 dias', 'rating': 4, 'content': 'Chegou dentro do prazo. Produto de qualidade, recomendo a todos.'},
-            {'name': 'Ricardo Souza', 'date': 'Há 03 dias', 'rating': 5, 'content': 'Atendimento nota 10 e produto de extrema qualidade. Parabéns pela loja.'},
-            {'name': 'Gabriel Ramos', 'date': 'Há 03 dias', 'rating': 5, 'content': 'O touchpad e o microfone integrado funcionam perfeitamente. Top!'},
-            {'name': 'Marcelo Vieira', 'date': 'Há 03 dias', 'rating': 5, 'content': 'O controle é robusto e parece ser bem durável. Ótima aquisição.'},
-            {'name': 'André Santos', 'date': 'Há 03 dias', 'rating': 5, 'content': 'Comprei para jogar no PC e funcionou perfeitamente via cabo e Bluetooth.'},
-            {'name': 'Felipe Diniz', 'date': 'Há 03 dias', 'rating': 5, 'content': 'A melhor loja para comprar acessórios de PS5. Podem confiar.'}
+            {'name': 'Gustavo Martins', 'date': 'Hoje', 'rating': 5, 'content': 'Uso há 2 meses e já vi o carregamento rápido, melhorou muito meu dia a dia.'},
+            {'name': 'Lucas Gomes', 'date': 'Hoje', 'rating': 5, 'content': 'Fiz os testes e é original, podem comprar que vale a pena.'},
+            {'name': 'Rodrigo Pedro', 'date': 'Hoje', 'rating': 5, 'content': 'Chegou rápido, mas a caixa veio meio amassada, mas não afetou o produto então de boa.'},
+            {'name': 'Vinícius Rocha', 'date': 'Ontem', 'rating': 5, 'content': 'Esse carregador realmente funciona, carrega meu iPhone super rápido.'},
+            {'name': 'João Costa', 'date': 'Ontem', 'rating': 5, 'content': 'Meu iPhone carregava muito lento, agora está super rápido. Top!'},
+            {'name': 'Rodrigo Oliveira', 'date': 'Ontem', 'rating': 4, 'content': 'Sempre compro aqui, o único lugar que confio que é original e de vez em quando tem umas promoções boas.'},
+            {'name': 'Diego Santos', 'date': 'Ontem', 'rating': 5, 'content': 'Excelente atendimento via WhatsApp. Chegou bem embalado e protegido.'},
+            {'name': 'Alexandre Teixeira', 'date': 'Ontem', 'rating': 5, 'content': 'Notei que o carregamento é estável e não esquenta o aparelho.'},
+            {'name': 'Mateus Costa', 'date': 'Ontem', 'rating': 5, 'content': 'Produto original mesmo. Verifiquei o lote e está tudo certo.'},
+            {'name': 'Thiago S.', 'date': 'Há 02 dias', 'rating': 5, 'content': 'Ótimo produto, original e com garantia. Já é minha segunda compra.'},
+            {'name': 'Diego Almeida', 'date': 'Há 02 dias', 'rating': 5, 'content': 'Uso diariamente e o carregamento é incrivelmente rápido.'},
+            {'name': 'Samuel Lima', 'date': 'Há 02 dias', 'rating': 5, 'content': 'Produto excelente! Estou usando há meses e a bateria do meu iPhone agradece.'},
+            {'name': 'Lucas Pedro', 'date': 'Há 02 dias', 'rating': 5, 'content': 'O investimento vale a pena, a velocidade de carregamento compensa demais.'},
+            {'name': 'Bruno Melo', 'date': 'Há 02 dias', 'rating': 5, 'content': 'Melhor preço que encontrei para o carregador original. Recomendo.'},
+            {'name': 'Fernando Silva', 'date': 'Há 03 dias', 'rating': 4, 'content': 'Chegou dentro do prazo. Começando a usar agora, esperançoso com a velocidade.'},
+            {'name': 'Ricardo Souza', 'date': 'Há 03 dias', 'rating': 5, 'content': 'Atendimento nota 10 e produto de extrema qualidade. Parabéns.'},
+            {'name': 'Gabriel Ramos', 'date': 'Há 03 dias', 'rating': 5, 'content': 'Meu tempo de carregamento diminuiu drasticamente em minutos.'},
+            {'name': 'Marcelo Vieira', 'date': 'Há 03 dias', 'rating': 5, 'content': 'As informações sobre o produto ajudam muito a entender o funcionamento.'},
+            {'name': 'André Santos', 'date': 'Há 03 dias', 'rating': 5, 'content': 'Comprei o carregador e não me arrependo. Originalidade comprovada.'},
+            {'name': 'Felipe Diniz', 'date': 'Há 03 dias', 'rating': 5, 'content': 'A melhor loja para acessórios Apple. Podem comprar sem medo.'}
         ];
         let currentPage = 1;
-const reviewsPerPage = 4;
-
-// Função para renderizar o grid de avaliações
-function renderReviews(page) {
-    const grid = document.getElementById('reviewsGrid');
-    if(!grid) return;
-    grid.innerHTML = '';
-    const startIndex = (page - 1) * reviewsPerPage;
-    const pageReviews = allReviews.slice(startIndex, startIndex + reviewsPerPage);
-
-    pageReviews.forEach((review, index) => {
-        const card = document.createElement('div');
-        card.className = 'review-card';
-        // Lógica de estrelas e conteúdo...
-        card.innerHTML = `...`; 
-        grid.appendChild(card);
-    });
-    renderPagination(page);
-}
-
-// Lógica do Carrossel de Fotos
-function renderCarousel() {
-    const carouselContainer = document.getElementById('reviewCarousel');
-    // Triplica as imagens para efeito de scroll infinito
-    const tripleImages = [...carouselImages, ...carouselImages, ...carouselImages];
-    carouselContainer.innerHTML = tripleImages.map(img => `
-        <div class="carousel-item" onclick="openImageModal('${img}')">
-            <img src="${img}">
-        </div>
-    `).join('');
-}
-
-// Funções do Lightbox (Zoom)
-function openImageModal(src) {
-    const modal = document.getElementById('imageModal');
-    const modalImg = document.getElementById('modalImg');
-    modal.classList.add('active');
-    modalImg.src = src;
-    document.body.style.overflow = 'hidden';
-}
-
-function closeImageModal() {
-    const modal = document.getElementById('imageModal');
-    modal.classList.remove('active');
-    document.body.style.overflow = 'auto';
-}
-
+        const reviewsPerPage = 4;
 
         function renderReviews(page) {
             const grid = document.getElementById('reviewsGrid');
@@ -3232,12 +3037,6 @@ if (timerDisplay) {
 }
     })();
     </script>
-
-        <!-- Modal de Lightbox (Fica no final do body) -->
-<div id="imageModal" class="image-modal" onclick="closeImageModal(false)">
-    <span class="image-modal-close" onclick="closeImageModal(false)">&times;</span>
-    <img class="image-modal-content" id="modalImg">
-</div>
     
 </body>
 </html>
