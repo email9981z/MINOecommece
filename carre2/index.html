@@ -2371,7 +2371,11 @@ function initGallery() {
 
 
         // Initialize on load
-        window.onload = initGallery;
+        window.onload = () => {
+            initGallery();
+            renderCarousel();
+            renderReviews(currentPage);
+        };
         
         // Listen for scroll on main slider to sync thumbnails
         document.getElementById('imageSlider').addEventListener('scroll', () => {
