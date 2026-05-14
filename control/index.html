@@ -55,6 +55,50 @@
             display: block;
             object-fit: cover;
         }
+
+        /* --- LIGHTBOX STYLES --- */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .image-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        .image-modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        .image-modal.active .image-modal-content {
+            transform: scale(1);
+        }
+        .image-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .image-modal-close:hover {
+            color: #bbb;
+        }
         .carousel-container {
             display: flex;
             overflow-x: auto;
@@ -2240,14 +2284,21 @@ const productImages = [
         const reviewImagesRaw = `
 https://http2.mlstatic.com/D_NQ_NP_2X_712865-MLA94145378192_102025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_980200-MLA99026083766_112025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_723612-MLA88546851994_072025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_697979-MLA99924488980_122025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_872837-MLA94830780752_102025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_799514-MLA93286320693_092025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_611739-MLA94830373848_102025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_783103-MLA88896175705_072025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_966551-MLA109092382566_042026-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_773111-MLA104145341742_012026-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_647842-MLA109809073254_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_912590-MLA108979404848_032026-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_943525-MLA82210012559_022025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_694562-MLA94830324544_102025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_902924-MLA104301249242_012026-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_712429-MLA81929575572_022025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_689799-MLA99846224637_112025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_604399-MLA99229715813_112025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_785867-MLA109929846483_042026-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_686125-MLA102166518300_122025-F.webp
@@ -2256,19 +2307,31 @@ https://http2.mlstatic.com/D_NQ_NP_2X_690220-MLA110688778872_052026-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_865561-MLA76889616528_062024-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_910000-MLA109981297597_042026-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_932043-MLA96137548487_102025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_704404-MLA94830790698_102025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_942548-MLA83237277342_042025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_604063-MLA109406830602_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_927658-MLA94830353956_102025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_930098-MLA94830790702_102025-F.webp
 `;
 
         const carouselImagesRaw = `
 https://http2.mlstatic.com/D_NQ_NP_2X_712865-MLA94145378192_102025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_980200-MLA99026083766_112025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_723612-MLA88546851994_072025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_697979-MLA99924488980_122025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_872837-MLA94830780752_102025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_799514-MLA93286320693_092025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_611739-MLA94830373848_102025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_783103-MLA88896175705_072025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_966551-MLA109092382566_042026-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_773111-MLA104145341742_012026-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_647842-MLA109809073254_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_912590-MLA108979404848_032026-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_943525-MLA82210012559_022025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_694562-MLA94830324544_102025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_902924-MLA104301249242_012026-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_712429-MLA81929575572_022025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_689799-MLA99846224637_112025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_604399-MLA99229715813_112025-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_785867-MLA109929846483_042026-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_686125-MLA102166518300_122025-F.webp
@@ -2277,6 +2340,11 @@ https://http2.mlstatic.com/D_NQ_NP_2X_690220-MLA110688778872_052026-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_865561-MLA76889616528_062024-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_910000-MLA109981297597_042026-F.webp
 https://http2.mlstatic.com/D_NQ_NP_2X_932043-MLA96137548487_102025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_704404-MLA94830790698_102025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_942548-MLA83237277342_042025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_604063-MLA109406830602_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_927658-MLA94830353956_102025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_930098-MLA94830790702_102025-F.webp
 `;
 
         // Processamento automático das listas
@@ -2336,7 +2404,7 @@ const allReviews = [
                 let imageHtml = '';
                 if (index < 2) {
                     const imageIndex = (index) % reviewImages.length;
-                    imageHtml = `<div class="review-image-container"><img src="${reviewImages[imageIndex]}" alt="Avaliação do Cliente" class="review-image"></div>`;
+                    imageHtml = `<div class="review-image-container" onclick="openImageModal('${reviewImages[imageIndex]}')"><img src="${reviewImages[imageIndex]}" alt="Avaliação do Cliente" class="review-image"></div>`;
                 }
 
                 card.innerHTML = `
@@ -2425,6 +2493,21 @@ const allReviews = [
             document.getElementById(tabName).style.display = "block";
             document.getElementById(tabName).classList.add("active");
             evt.currentTarget.classList.add("active");
+        }
+
+        // Funções para o Modal de Imagem (Lightbox)
+        function openImageModal(src) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImg');
+            modal.classList.add('active');
+            modalImg.src = src;
+            document.body.style.overflow = 'hidden'; // Trava o scroll da página
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto'; // Destrava o scroll
         }
 
         // Inicializar avaliações ao carregar
@@ -3393,5 +3476,11 @@ if (timerDisplay) {
 
 
     
+    <!-- Modal para Visualização de Imagem -->
+    <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+        <span class="image-modal-close">&times;</span>
+        <img class="image-modal-content" id="modalImg">
+    </div>
+
 </body>
 </html>
