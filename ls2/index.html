@@ -932,44 +932,7 @@ body:has(.cart-overlay.active) #notif-premium-container {
         .rating-number { font-size: 42px; font-weight: 800; color: var(--text-main); }
         .total-reviews-count { color: var(--text-muted); font-size: 14px; display: block; font-weight: 500; }
         
-        .reviews-grid { 
-            display: flex; 
-            overflow-x: auto; 
-            gap: 24px; 
-            margin-bottom: 40px; 
-            scroll-behavior: smooth; 
-            scrollbar-width: none; 
-            -ms-overflow-style: none;
-            padding: 20px 5px;
-            cursor: grab;
-            user-select: none;
-        }
-        .reviews-grid::-webkit-scrollbar { display: none; }
-        .reviews-grid.active { cursor: grabbing; }
-        .review-card { 
-            flex: 0 0 calc(20% - 20px); 
-            min-width: 300px; 
-            padding: 28px; 
-            border: 1px solid #e2e8f0; 
-            border-radius: 16px; 
-            background: #fff; 
-            transition: transform 0.3s ease, box-shadow 0.3s ease; 
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); 
-            position: relative; 
-            overflow: hidden; 
-        }
-        @media (max-width: 1400px) {
-            .review-card { flex: 0 0 calc(25% - 18px); }
-        }
-        @media (max-width: 1100px) {
-            .review-card { flex: 0 0 calc(33.333% - 16px); }
-        }
-        @media (max-width: 768px) {
-            .review-card { flex: 0 0 calc(50% - 12px); }
-        }
-        @media (max-width: 480px) {
-            .review-card { flex: 0 0 85%; }
-        }
+        .reviews-grid { display: grid; grid-template-columns: 1fr; gap: 24px; margin-bottom: 40px; }
         .review-card { padding: 28px; border: 1px solid #e2e8f0; border-radius: 16px; background: #fff; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); position: relative; overflow: hidden; }
         .review-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 0; background: var(--brand-primary); transition: height 0.3s ease; }
         .review-card:hover { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); transform: translateY(-4px); border-color: #cbd5e1; }
@@ -997,7 +960,7 @@ body:has(.cart-overlay.active) #notif-premium-container {
         
         @media (min-width: 768px) {
             .info-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
-            /* Removido grid para carrossel */
+            .reviews-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
         }
 
         /* Newsletter Section */
@@ -2568,11 +2531,11 @@ const allReviews = [
     { 'name': 'Daiane Santos', 'date': 'Ontem', 'rating': 5, 'content': 'Excelente atendimento via WhatsApp. O capacete veio protegido na caixa original e com a bag da LS2.' },
     { 'name': 'Alexandra Teixeira', 'date': 'Ontem', 'rating': 5, 'content': 'Viseira com ótima visibilidade e sistema de troca rápida funcional. Muito satisfeita!' },
     { 'name': 'Mateus Costa', 'date': 'Ontem', 'rating': 5, 'content': 'Produto original mesmo. Verifiquei todos os selos e a qualidade da pintura fosca é impecável.' },
+    { 'name': 'Daniel C.', 'date': 'Há 07 dias', 'rating': 5, 'content': 'Pintura de alta qualidade. Não risca fácil. Show de bola!' },
+    { 'name': 'Priscila B.', 'date': 'Há 07 dias', 'rating': 5, 'content': 'Leve, bonito e original. Não tem erro.' },
+    { 'name': 'Otávio F.', 'date': 'Há 07 dias', 'rating': 5, 'content': 'Uso para rodovia e o ruído de vento é bem aceitável.' },
     { 'name': 'Thiago S.', 'date': 'Há 02 dias', 'rating': 5, 'content': 'Ótimo produto, original e com garantia. Já é o meu segundo FF358, confio muito na marca.' },
     { 'name': 'Diego Almeida', 'date': 'Há 02 dias', 'rating': 5, 'content': 'Acabamento impecável. O capacete é robusto, o engate rápido é prático e passa muita confiança.' },
-    { 'name': 'Anderson T.', 'date': 'Há 12 dias', 'rating': 5, 'content': 'Melhor custo-benefício do mercado atualmente.' },
-    { 'name': 'Monique S.', 'date': 'Há 13 dias', 'rating': 5, 'content': 'Tive um problema com o tamanho e trocaram rapidamente. Ótimo pós-venda.' },
-    { 'name': 'Wesley B.', 'date': 'Há 13 dias', 'rating': 5, 'content': 'A cor fosca é linda pessoalmente. As fotos não fazem justiça.' },
     { 'name': 'Samanta Lima', 'date': 'Há 02 dias', 'rating': 5, 'content': 'Produto excelente! Estou usando diariamente e a forração continua firme e muito confortável.' },
     { 'name': 'Lucas Pedro', 'date': 'Há 02 dias', 'rating': 5, 'content': 'O design desse preto fosco é outro nível. Ventilação funciona muito bem no calor. Recomendo!' },
     { 'name': 'Bruno Melo', 'date': 'Há 02 dias', 'rating': 5, 'content': 'Melhor preço que encontrei para o LS2 original. Entrega antes do prazo.' },
@@ -2585,7 +2548,7 @@ const allReviews = [
      {'name': 'Felipe Diniz', 'date': 'Há 03 dias', 'rating': 5, 'content': 'A melhor loja para comprar acessórios. Podem confiar.'}
         ];
         let currentPage = 1;
-        const reviewsPerPage = 100;
+        const reviewsPerPage = 4;
 
         function renderCarousel() {
             const carouselContainer = document.getElementById('reviewCarousel');
@@ -2720,59 +2683,6 @@ const allReviews = [
                 grid.appendChild(card);
             });
             renderPagination(page);
-        }
-
-        function setupReviewsCarousel() {
-            const grid = document.getElementById('reviewsGrid');
-            if (!grid) return;
-
-            let isDown = false;
-            let startX;
-            let scrollLeft;
-
-            grid.addEventListener('mousedown', (e) => {
-                isDown = true;
-                grid.classList.add('active');
-                startX = e.pageX - grid.offsetLeft;
-                scrollLeft = grid.scrollLeft;
-                grid.style.scrollBehavior = 'auto';
-            });
-
-            grid.addEventListener('mouseleave', () => {
-                isDown = false;
-                grid.classList.remove('active');
-            });
-
-            grid.addEventListener('mouseup', () => {
-                isDown = false;
-                grid.classList.remove('active');
-                grid.style.scrollBehavior = 'smooth';
-            });
-
-            grid.addEventListener('mousemove', (e) => {
-                if (!isDown) return;
-                e.preventDefault();
-                const x = e.pageX - grid.offsetLeft;
-                const walk = (x - startX) * 2;
-                grid.scrollLeft = scrollLeft - walk;
-            });
-
-            // Touch support
-            grid.addEventListener('touchstart', (e) => {
-                startX = e.touches[0].pageX - grid.offsetLeft;
-                scrollLeft = grid.scrollLeft;
-                grid.style.scrollBehavior = 'auto';
-            });
-
-            grid.addEventListener('touchmove', (e) => {
-                const x = e.touches[0].pageX - grid.offsetLeft;
-                const walk = (x - startX) * 2;
-                grid.scrollLeft = scrollLeft - walk;
-            });
-
-            grid.addEventListener('touchend', () => {
-                grid.style.scrollBehavior = 'smooth';
-            });
         }
 
         function renderPagination(activePage) {
@@ -3023,10 +2933,7 @@ const allReviews = [
             // Garante que a galeria, o carrossel e as avaliações sejam iniciados
             if (typeof initGallery === 'function') initGallery();
             if (typeof renderCarousel === 'function') renderCarousel();
-            if (typeof renderReviews === 'function') {
-                renderReviews(1);
-                setupReviewsCarousel();
-            }
+            if (typeof renderReviews === 'function') renderReviews(1);
         });
 
         // 1. Cronômetro Regressivo
