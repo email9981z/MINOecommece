@@ -36,6 +36,124 @@
     <style>
 
         /* --- NOVOS ESTILOS DE ESCASSEZ --- */
+        .review-image-container {
+            margin: 15px 0;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #edf2f7;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            max-width: 180px; /* Tamanho mais proporcional */
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .review-image-container:hover {
+            transform: scale(1.02);
+        }
+        .review-image {
+            width: 100%;
+            height: 180px;
+            display: block;
+            object-fit: cover;
+        }
+
+        /* --- LIGHTBOX STYLES --- */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            touch-action: none;
+            overflow: hidden;
+        }
+        .image-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        .image-modal-content {
+            max-width: 95%;
+            max-height: 95%;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            transform: scale(0.9) translate(0, 0);
+            transition: transform 0.3s ease;
+            cursor: zoom-in;
+            user-select: none;
+            -webkit-user-drag: none;
+            touch-action: none;
+            will-change: transform;
+        }
+        .image-modal.zoomed .image-modal-content {
+            cursor: grab;
+            transition: none;
+        }
+        .image-modal.zoomed.dragging .image-modal-content {
+            cursor: grabbing;
+        }
+        .image-modal.active .image-modal-content {
+            transform: scale(1);
+        }
+        .image-modal-close {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            color: #fff;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10001;
+            width: 45px;
+            height: 45px;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            line-height: 1;
+            transition: 0.3s;
+        }
+        .image-modal-close:hover {
+            color: #bbb;
+        }
+        .carousel-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 12px;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            scroll-behavior: smooth;
+        }
+        .carousel-container::-webkit-scrollbar { display: none; }
+        .carousel-item {
+            flex: 0 0 auto;
+            width: 120px;
+            height: 120px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+        .carousel-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--brand-primary);
+        }
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+
 :root {
     --scarcity-red: #dc2626;
     --scarcity-bg: #fef2f2;
@@ -2071,6 +2189,10 @@ document.addEventListener('DOMContentLoaded', function() {
     <section class="reviews-section">
         <div class="container">
             <div class="reviews-header">
+                <div style="text-align: left; margin-bottom: 20px;">
+                    <h3 style="font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 10px;">Fotos dos Clientes</h3>
+                    <div class="carousel-container" id="reviewCarousel"></div>
+                </div>
                 <h2>Avaliações dos Clientes</h2>
                 <div class="overall-rating">
                     <span class="rating-number">4.9</span>
@@ -2260,7 +2382,7 @@ function initGallery() {
 
 
         // Initialize on load
-        window.onload = initGallery;
+        
         
         // Listen for scroll on main slider to sync thumbnails
         document.getElementById('imageSlider').addEventListener('scroll', () => {
@@ -2275,30 +2397,196 @@ function initGallery() {
         });
 
                 // LÓGICA DAS AVALIAÇÕES E TABS
-        const allReviews = [
-            {'name': 'Gustavo Martins', 'date': 'Hoje', 'rating': 5, 'content': 'Uso há 2 meses e já vi o carregamento rápido, melhorou muito meu dia a dia.'},
-            {'name': 'Lucas Gomes', 'date': 'Hoje', 'rating': 5, 'content': 'Fiz os testes e é original, podem comprar que vale a pena.'},
-            {'name': 'Rodrigo Pedro', 'date': 'Hoje', 'rating': 5, 'content': 'Chegou rápido, mas a caixa veio meio amassada, mas não afetou o produto então de boa.'},
-            {'name': 'Vinícius Rocha', 'date': 'Ontem', 'rating': 5, 'content': 'Esse carregador realmente funciona, carrega meu iPhone super rápido.'},
-            {'name': 'João Costa', 'date': 'Ontem', 'rating': 5, 'content': 'Meu iPhone carregava muito lento, agora está super rápido. Top!'},
-            {'name': 'Rodrigo Oliveira', 'date': 'Ontem', 'rating': 4, 'content': 'Sempre compro aqui, o único lugar que confio que é original e de vez em quando tem umas promoções boas.'},
-            {'name': 'Diego Santos', 'date': 'Ontem', 'rating': 5, 'content': 'Excelente atendimento via WhatsApp. Chegou bem embalado e protegido.'},
-            {'name': 'Alexandre Teixeira', 'date': 'Ontem', 'rating': 5, 'content': 'Notei que o carregamento é estável e não esquenta o aparelho.'},
-            {'name': 'Mateus Costa', 'date': 'Ontem', 'rating': 5, 'content': 'Produto original mesmo. Verifiquei o lote e está tudo certo.'},
-            {'name': 'Thiago S.', 'date': 'Há 02 dias', 'rating': 5, 'content': 'Ótimo produto, original e com garantia. Já é minha segunda compra.'},
-            {'name': 'Diego Almeida', 'date': 'Há 02 dias', 'rating': 5, 'content': 'Uso diariamente e o carregamento é incrivelmente rápido.'},
-            {'name': 'Samuel Lima', 'date': 'Há 02 dias', 'rating': 5, 'content': 'Produto excelente! Estou usando há meses e a bateria do meu iPhone agradece.'},
-            {'name': 'Lucas Pedro', 'date': 'Há 02 dias', 'rating': 5, 'content': 'O investimento vale a pena, a velocidade de carregamento compensa demais.'},
-            {'name': 'Bruno Melo', 'date': 'Há 02 dias', 'rating': 5, 'content': 'Melhor preço que encontrei para o carregador original. Recomendo.'},
-            {'name': 'Fernando Silva', 'date': 'Há 03 dias', 'rating': 4, 'content': 'Chegou dentro do prazo. Começando a usar agora, esperançoso com a velocidade.'},
-            {'name': 'Ricardo Souza', 'date': 'Há 03 dias', 'rating': 5, 'content': 'Atendimento nota 10 e produto de extrema qualidade. Parabéns.'},
-            {'name': 'Gabriel Ramos', 'date': 'Há 03 dias', 'rating': 5, 'content': 'Meu tempo de carregamento diminuiu drasticamente em minutos.'},
-            {'name': 'Marcelo Vieira', 'date': 'Há 03 dias', 'rating': 5, 'content': 'As informações sobre o produto ajudam muito a entender o funcionamento.'},
-            {'name': 'André Santos', 'date': 'Há 03 dias', 'rating': 5, 'content': 'Comprei o carregador e não me arrependo. Originalidade comprovada.'},
-            {'name': 'Felipe Diniz', 'date': 'Há 03 dias', 'rating': 5, 'content': 'A melhor loja para acessórios Apple. Podem comprar sem medo.'}
-        ];
+        // COLE SEUS LINKS ABAIXO (UM POR LINHA, SEM ASPAS OU VÍRGULAS)
+        const reviewImagesRaw = `
+https://http2.mlstatic.com/D_NQ_NP_2X_886394-MLA107023776638_022026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_997703-MLA110596581559_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_988361-MLA109768393474_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_917034-MLA110709094633_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_602994-MLA109684749756_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_844333-MLA98471204753_112025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_876730-MLA97595932363_112025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_748127-MLA96663878846_112025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_854045-MLA111197623361_052026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_879444-MLA97994047080_112025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_896375-MLA110571192691_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_956336-MLA107705566276_032026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_967822-MLA110621168639_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_800559-MLA110008178318_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_957243-MLA110511419373_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_711953-MLA108482578291_032026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_670114-MLA111197388763_052026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_668313-MLA110851501927_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_950038-MLA109732459322_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_771496-MLA110197880882_052026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_645253-MLA102511238118_122025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_891305-MLA110193147184_052026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_962385-MLA98455246203_112025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_819578-MLA98407149690_112025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_680769-MLA107470057797_022026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_769568-MLA101159360189_122025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_651190-MLA100639807623_122025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_958857-MLA100286557609_122025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_922986-MLA98783465617_112025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_634373-MLA110853635937_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_865030-MLA107525683313_022026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_679081-MLA97535919173_112025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_600660-MLA111197418763_052026-F.webp
+`;
+
+        const carouselImagesRaw = `
+https://http2.mlstatic.com/D_NQ_NP_2X_886394-MLA107023776638_022026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_997703-MLA110596581559_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_988361-MLA109768393474_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_917034-MLA110709094633_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_602994-MLA109684749756_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_844333-MLA98471204753_112025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_876730-MLA97595932363_112025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_748127-MLA96663878846_112025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_854045-MLA111197623361_052026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_879444-MLA97994047080_112025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_896375-MLA110571192691_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_956336-MLA107705566276_032026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_967822-MLA110621168639_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_800559-MLA110008178318_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_957243-MLA110511419373_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_711953-MLA108482578291_032026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_670114-MLA111197388763_052026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_668313-MLA110851501927_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_950038-MLA109732459322_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_771496-MLA110197880882_052026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_645253-MLA102511238118_122025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_891305-MLA110193147184_052026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_962385-MLA98455246203_112025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_819578-MLA98407149690_112025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_680769-MLA107470057797_022026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_769568-MLA101159360189_122025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_651190-MLA100639807623_122025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_958857-MLA100286557609_122025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_922986-MLA98783465617_112025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_634373-MLA110853635937_042026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_865030-MLA107525683313_022026-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_679081-MLA97535919173_112025-F.webp
+https://http2.mlstatic.com/D_NQ_NP_2X_600660-MLA111197418763_052026-F.webp
+`;
+
+        // Processamento automático das listas
+        const reviewImages = reviewImagesRaw.trim().split('\n').map(url => url.trim()).filter(url => url !== '');
+        const carouselImages = carouselImagesRaw.trim().split('\n').map(url => url.trim()).filter(url => url !== '');
+
+const allReviews = [
+            const avaliacoesCarregadorIphone = [
+    { 'name': 'Gustavo Martins', 'date': 'Hoje', 'rating': 5, 'content': 'TOP Demais! Original mesmo, reconhece o carregamento rápido na hora. Podem comprar!' },
+    { 'name': 'Bianca Gomes', 'date': 'Hoje', 'rating': 5, 'content': 'Chegou rápido e bem embalado. O carregador é realmente original, qualidade Apple.' },
+    { 'name': 'Rodrigo Pedro', 'date': 'Hoje', 'rating': 5, 'content': 'Produto 100% original, carregamento turbo funcionando perfeito. Recomendo!' },
+    { 'name': 'Viviane Rocha', 'date': 'Ontem', 'rating': 5, 'content': 'Recomendo, chegou rápido e o preço é justo por um item original. Vale cada centavo.' },
+    { 'name': 'João Costa', 'date': 'Ontem', 'rating': 5, 'content': 'Melhor carregador que já usei. Carrega o iPhone muito rápido e não esquenta o aparelho.' },
+    { 'name': 'Larissa Oliveira', 'date': 'Ontem', 'rating': 4, 'content': 'Sempre compro aqui, o único lugar que confio que é original. Chegou tudo certo.' },
+    { 'name': 'Angélica Santos', 'date': 'Ontem', 'rating': 5, 'content': 'Excelente atendimento via WhatsApp. O carregador chegou bem embalado e protegido.' },
+    { 'name': 'Alexandre Teixeira', 'date': 'Ontem', 'rating': 5, 'content': 'Carregamento PD muito rápido, ideal para quem tem pressa. Muito satisfeito!' },
+    { 'name': 'Mateus Costa', 'date': 'Ontem', 'rating': 5, 'content': 'Produto original mesmo. Verifiquei o selo da Anatel e está tudo correto.' },
+    { 'name': 'Mariana S.', 'date': 'Há 02 dias', 'rating': 5, 'content': 'Ótimo produto, original e com garantia. Já é o meu segundo para deixar no escritório.' },
+    { 'name': 'Diego Almeida', 'date': 'Há 02 dias', 'rating': 5, 'content': 'Acabamento impecável. O carregador é robusto e passa muita confiança.' },
+    { 'name': 'Samira Lima', 'date': 'Há 02 dias', 'rating': 5, 'content': 'Produto excelente! Estou usando há semanas e a saúde da bateria continua perfeita.' },
+    { 'name': 'Lucas Pedro', 'date': 'Há 02 dias', 'rating': 5, 'content': 'A velocidade de carga desse adaptador de 20W é outro nível. Recomendo!' },
+    { 'name': 'Bruno Melo', 'date': 'Há 02 dias', 'rating': 5, 'content': 'Melhor preço que encontrei para o carregador Apple original. Entrega rápida.' },
+    { 'name': 'Fernanda Silva', 'date': 'Há 03 dias', 'rating': 4, 'content': 'Chegou dentro do prazo. Produto de qualidade e homologado, recomendo a todos.' },
+    { 'name': 'Ricardo Souza', 'date': 'Há 03 dias', 'rating': 5, 'content': 'Atendimento nota 10 e produto de extrema qualidade. Parabéns pela loja.' },
+    { 'name': 'Gabriel Ramos', 'date': 'Há 03 dias', 'rating': 5, 'content': 'Funciona perfeitamente no meu iPhone 15 e também no iPad. Top!' },
+    { 'name': 'Marcela Vieira', 'date': 'Há 03 dias', 'rating': 5, 'content': 'O carregador é robusto e parece ser bem durável. Ótima aquisição.' },
+    { 'name': 'Andréia Santos', 'date': 'Há 03 dias', 'rating': 5, 'content': 'Comprei para usar com meu MagSafe e funcionou perfeitamente com potência máxima.' },
+    { 'name': 'Felipe Diniz', 'date': 'Há 03 dias', 'rating': 5, 'content': 'A melhor loja para comprar acessórios originais. Podem confiar.' }
+];
         let currentPage = 1;
         const reviewsPerPage = 4;
+
+        function renderCarousel() {
+            const carouselContainer = document.getElementById('reviewCarousel');
+            if (!carouselContainer) return;
+            
+            // Para um efeito infinito perfeito, clonamos os itens
+            // Criamos a estrutura: [Clones Finais] [Originais] [Clones Iniciais]
+            // Mas para simplificar e garantir fluidez, usamos a técnica de triplicação
+            const tripleImages = [...carouselImages, ...carouselImages, ...carouselImages];
+            
+            carouselContainer.innerHTML = tripleImages.map(img => `
+                <div class="carousel-item" onclick="openImageModal('${img}')">
+                    <img src="${img}" alt="Avaliação do Cliente">
+                </div>
+            `).join('');
+
+            let isResetting = false;
+
+            carouselContainer.addEventListener('scroll', () => {
+                if (isResetting) return;
+
+                const itemWidth = carouselContainer.querySelector('.carousel-item').offsetWidth + 12;
+                const totalWidth = carouselImages.length * itemWidth;
+                
+                // Margem de segurança para o reset ser imperceptível
+                const threshold = 5; 
+
+                if (carouselContainer.scrollLeft <= threshold) {
+                    isResetting = true;
+                    carouselContainer.style.scrollBehavior = 'auto';
+                    carouselContainer.scrollLeft = totalWidth;
+                    // Força um reflow para garantir que o scrollBehavior 'auto' seja aplicado antes de voltar para 'smooth'
+                    carouselContainer.offsetHeight; 
+                    carouselContainer.style.scrollBehavior = 'smooth';
+                    isResetting = false;
+                } else if (carouselContainer.scrollLeft >= (totalWidth * 2) - threshold) {
+                    isResetting = true;
+                    carouselContainer.style.scrollBehavior = 'auto';
+                    carouselContainer.scrollLeft = totalWidth;
+                    carouselContainer.offsetHeight;
+                    carouselContainer.style.scrollBehavior = 'smooth';
+                    isResetting = false;
+                }
+            });
+
+            // Posicionamento inicial sem animação
+            const setInitialPosition = () => {
+                const item = carouselContainer.querySelector('.carousel-item');
+                if (item) {
+                    const itemWidth = item.offsetWidth + 12;
+                    carouselContainer.style.scrollBehavior = 'auto';
+                    carouselContainer.scrollLeft = carouselImages.length * itemWidth;
+                    carouselContainer.style.scrollBehavior = 'smooth';
+                }
+            };
+
+            // Tenta posicionar imediatamente e também após um curto delay para garantir que o layout foi renderizado
+            setInitialPosition();
+            setTimeout(setInitialPosition, 100);
+            
+            // Adiciona suporte a arraste (drag) para desktop para melhorar a experiência
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            carouselContainer.addEventListener('mousedown', (e) => {
+                isDown = true;
+                carouselContainer.classList.add('active');
+                startX = e.pageX - carouselContainer.offsetLeft;
+                scrollLeft = carouselContainer.scrollLeft;
+                carouselContainer.style.scrollBehavior = 'auto';
+            });
+            carouselContainer.addEventListener('mouseleave', () => {
+                isDown = false;
+                carouselContainer.style.scrollBehavior = 'smooth';
+            });
+            carouselContainer.addEventListener('mouseup', () => {
+                isDown = false;
+                carouselContainer.style.scrollBehavior = 'smooth';
+            });
+            carouselContainer.addEventListener('mousemove', (e) => {
+                if(!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - carouselContainer.offsetLeft;
+                const walk = (x - startX) * 2;
+                carouselContainer.scrollLeft = scrollLeft - walk;
+            });
+        }
 
         function renderReviews(page) {
             const grid = document.getElementById('reviewsGrid');
@@ -2307,11 +2595,26 @@ function initGallery() {
             const startIndex = (page - 1) * reviewsPerPage;
             const pageReviews = allReviews.slice(startIndex, startIndex + reviewsPerPage);
 
-            pageReviews.forEach(review => {
+            pageReviews.forEach((review, index) => {
                 const card = document.createElement('div');
                 card.className = 'review-card';
+                // Adiciona classe has-image para todas as avaliações (index < 4)
+                if (index < 4) { card.classList.add('has-image'); }
+                
                 let starsHtml = '';
                 for(let i=0; i<5; i++) starsHtml += `<i class="${i < review.rating ? 'fas' : 'far'} fa-star"></i>`;
+                
+                // Lógica para cada avaliação ter uma imagem diferente seguindo a ordem do carrossel
+                let imageHtml = '';
+                if (index < 4) {
+                    // imageIndex usa startIndex (página) + index (posição na página) para ser único
+                    const imageIndex = (startIndex + index) % reviewImages.length;
+                    const imageUrl = reviewImages[imageIndex];
+                    imageHtml = `<div class="review-image-container" onclick="openImageModal('${imageUrl}')">
+                                    <img src="${imageUrl}" alt="Avaliação do Cliente" class="review-image">
+                                 </div>`;
+                }
+
                 card.innerHTML = `
                     <div class="review-top">
                         <div class="reviewer-info">
@@ -2325,6 +2628,7 @@ function initGallery() {
                     </div>
                     <div class="review-stars">${starsHtml}</div>
                     <div class="review-content">${review.content}</div>
+                    ${imageHtml}
                 `;
                 grid.appendChild(card);
             });
@@ -2381,6 +2685,178 @@ function initGallery() {
             pagination.appendChild(nextBtn);
         }
 
+        
+        (function() {
+            let scale = 1;
+            let lastScale = 1;
+            let posX = 0;
+            let posY = 0;
+            let lastPosX = 0;
+            let lastPosY = 0;
+            let isDragging = false;
+            let startX = 0;
+            let startY = 0;
+            let initialPinchDistance = 0;
+
+            window.openImageModal = function(src) {
+                const modal = document.getElementById('imageModal');
+                const modalImg = document.getElementById('modalImage');
+                if (modal && modalImg) {
+                    modalImg.src = src;
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                    resetZoom();
+                }
+            }
+
+            window.closeImageModal = function(e) {
+                if (e && e.target !== e.currentTarget && !e.target.classList.contains('image-modal-close')) return;
+                const modal = document.getElementById('imageModal');
+                if (modal) {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = '';
+                    resetZoom();
+                }
+            }
+
+            function resetZoom() {
+                scale = 1;
+                lastScale = 1;
+                posX = 0;
+                posY = 0;
+                lastPosX = 0;
+                lastPosY = 0;
+                const modal = document.getElementById('imageModal');
+                const modalImg = document.getElementById('modalImage');
+                if (modal) modal.classList.remove('zoomed', 'dragging');
+                if (modalImg) {
+                    modalImg.style.transform = `scale(1) translate(0, 0)`;
+                    modalImg.style.transition = 'transform 0.3s ease';
+                }
+            }
+
+            function updateTransform() {
+                const modalImg = document.getElementById('modalImage');
+                const modal = document.getElementById('imageModal');
+                if (!modalImg) return;
+
+                if (scale > 1) {
+                    modal.classList.add('zoomed');
+                } else {
+                    modal.classList.remove('zoomed');
+                    posX = 0;
+                    posY = 0;
+                }
+
+                modalImg.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const modalImg = document.getElementById('modalImage');
+                const modal = document.getElementById('imageModal');
+                if (!modalImg || !modal) return;
+
+                // Prevent default drag
+                modalImg.addEventListener('dragstart', (e) => e.preventDefault());
+
+                // Mouse Wheel Zoom
+                modal.addEventListener('wheel', (e) => {
+                    if (!modal.classList.contains('active')) return;
+                    e.preventDefault();
+                    const delta = e.deltaY > 0 ? -0.2 : 0.2;
+                    const newScale = Math.min(Math.max(1, scale + delta), 4);
+                    
+                    if (newScale !== scale) {
+                        scale = newScale;
+                        if (scale === 1) {
+                            posX = 0;
+                            posY = 0;
+                        }
+                        modalImg.style.transition = 'transform 0.2s ease';
+                        updateTransform();
+                    }
+                }, { passive: false });
+
+                // Double Click Zoom
+                modalImg.addEventListener('dblclick', (e) => {
+                    if (scale > 1) {
+                        resetZoom();
+                    } else {
+                        scale = 2.5;
+                        modalImg.style.transition = 'transform 0.3s ease';
+                        updateTransform();
+                    }
+                });
+
+                // Drag / Pan
+                const startDrag = (x, y) => {
+                    if (scale <= 1) return;
+                    isDragging = true;
+                    startX = x - posX;
+                    startY = y - posY;
+                    modal.classList.add('dragging');
+                    modalImg.style.transition = 'none';
+                };
+
+                const doDrag = (x, y) => {
+                    if (!isDragging) return;
+                    posX = x - startX;
+                    posY = y - startY;
+                    updateTransform();
+                };
+
+                const stopDrag = () => {
+                    isDragging = false;
+                    modal.classList.remove('dragging');
+                };
+
+                modal.addEventListener('mousedown', (e) => {
+                    if (e.target === modalImg) startDrag(e.clientX, e.clientY);
+                });
+                window.addEventListener('mousemove', (e) => doDrag(e.clientX, e.clientY));
+                window.addEventListener('mouseup', stopDrag);
+
+                // Touch Events (Pinch & Pan)
+                modal.addEventListener('touchstart', (e) => {
+                    if (e.touches.length === 1) {
+                        if (scale > 1) {
+                            startDrag(e.touches[0].clientX, e.touches[0].clientY);
+                        }
+                    } else if (e.touches.length === 2) {
+                        isDragging = false;
+                        initialPinchDistance = Math.hypot(
+                            e.touches[0].clientX - e.touches[1].clientX,
+                            e.touches[0].clientY - e.touches[1].clientY
+                        );
+                        lastScale = scale;
+                        modalImg.style.transition = 'none';
+                    }
+                }, { passive: true });
+
+                modal.addEventListener('touchmove', (e) => {
+                    if (e.touches.length === 1 && isDragging) {
+                        doDrag(e.touches[0].clientX, e.touches[0].clientY);
+                    } else if (e.touches.length === 2) {
+                        e.preventDefault();
+                        const currentDistance = Math.hypot(
+                            e.touches[0].clientX - e.touches[1].clientX,
+                            e.touches[0].clientY - e.touches[1].clientY
+                        );
+                        const delta = currentDistance / initialPinchDistance;
+                        scale = Math.min(Math.max(1, lastScale * delta), 4);
+                        updateTransform();
+                    }
+                }, { passive: false });
+
+                modal.addEventListener('touchend', (e) => {
+                    stopDrag();
+                    if (e.touches.length < 2) {
+                        initialPinchDistance = 0;
+                    }
+                });
+            });
+        })();
+    
         function scrollToReviews() {
             const section = document.querySelector('.reviews-section');
             window.scrollTo({
@@ -2400,7 +2876,15 @@ function initGallery() {
         }
 
         // Inicializar avaliações ao carregar
-        window.addEventListener('DOMContentLoaded', () => { renderReviews(1); });
+        
+
+        
+        window.addEventListener('load', () => {
+            // Garante que a galeria, o carrossel e as avaliações sejam iniciados
+            if (typeof initGallery === 'function') initGallery();
+            if (typeof renderCarousel === 'function') renderCarousel();
+            if (typeof renderReviews === 'function') renderReviews(1);
+        });
 
         // 1. Cronômetro Regressivo
 function startTimer(durationInSeconds, display) {
@@ -3038,5 +3522,10 @@ if (timerDisplay) {
     })();
     </script>
     
+<!-- Modal para Visualização de Imagem -->
+    <div id="imageModal" class="image-modal" onclick="window.closeImageModal(event)">
+        <span class="image-modal-close" onclick="window.closeImageModal(event)">&times;</span>
+        <img class="image-modal-content" id="modalImage">
+    </div>
 </body>
 </html>
