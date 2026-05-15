@@ -1865,7 +1865,8 @@ function selectVariant(id) {
         initGallery();
     }
 
-
+    // Rolagem automática para o topo ao selecionar variante
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // 4. Chame a inicialização dentro do seu DOMContentLoaded
