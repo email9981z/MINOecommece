@@ -3508,19 +3508,18 @@ const params = new URLSearchParams({
             });
         });
 
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                const preloader = document.getElementById('preloader');
-                const mainContent = document.getElementById('mainContent');
-                if (preloader) {
-                    preloader.classList.add('hidden');
-                    setTimeout(() => preloader.remove(), 600);
-                }
-                if (mainContent) {
-                    mainContent.classList.add('visible');
-                }
-            }, 1000);
-        });
+        // O spinner agora dura exatamente 1 segundo após o processamento inicial da página
+        setTimeout(function() {
+            const preloader = document.getElementById('preloader');
+            const mainContent = document.getElementById('mainContent');
+            if (preloader) {
+                preloader.classList.add('hidden');
+                setTimeout(() => preloader.remove(), 600);
+            }
+            if (mainContent) {
+                mainContent.classList.add('visible');
+            }
+        }, 1000);
     </script>
 
     <!-- Sticky CTA Mobile -->
